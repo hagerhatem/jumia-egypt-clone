@@ -1,0 +1,486 @@
+<!-- src/app/pages/admin/admin-product-form/admin-product-form.component.html -->
+<div class="admin-product-form-container" style="overflow-y: hidden; height: 100vh;">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <div class="col-md-2 bg-dark min-vh-100">
+      <app-sidebar [collapsed]="isCollapsed" (toggle)="toggleSidebar()" [class.show]="showSidebar"></app-sidebar>
+
+    </div>
+    
+    <!-- Main content -->
+    <div class="col-md-10">
+      
+      <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+        <div class="row mb-4">
+          <div class="col">
+            <h2>{{isEditMode ? 'Edit' : 'Add'}} Product</h2>
+            <p class="text-muted">{{isEditMode ? 'Update product information' : 'Create a new product'}}</p>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-outline-secondary" routerLink="/admin/products">
+              <i class="bi bi-arrow-left me-2"></i>Back to Products
+            </button>
+          </div>
+        </div>
+      
+        <!-- Add the approval form section -->
+        <div class="row mb-4" *ngIf="isEditMode && productForm.get('approvalStatus')?.value === 'pending'">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Product Approval</h5>
+                <form [formGroup]="approvalForm">
+                  <div class="mb-3">
+                    <label for="adminNotes" class="form-label">Admin Notes</label>
+                    <textarea 
+                      id="adminNotes" 
+                      class="form-control" 
+                      formControlName="adminNotes" 
+                      rows="3"
+                      placeholder="Enter reason (required for rejection)"></textarea>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-success" (click)="onApprove()">
+                      <i class="bi bi-check-circle me-2"></i>Approve
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="onReject()">
+                      <i class="bi bi-x-circle me-2"></i>Reject
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Product form -->
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+          <div class="row g-4">
+            <!-- Basic Information -->
+            <div class="col-md-8">
+              <div class="card mb-4">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Basic Information</h5>
+                </div>
+                <div class="card-body">
+                  <!-- Product Name -->
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" formControlName="name"
+                           [ngClass]="{'is-invalid': isFieldInvalid('name')}">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+                      {{getErrorMessage('name')}}
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="mb-3">
+                    <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="description" rows="4" formControlName="description"
+                              [ngClass]="{'is-invalid': isFieldInvalid('description')}"></textarea>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('description')">
+                      {{getErrorMessage('description')}}
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <!-- Category with Search -->
+                    <div class="col-md-4 mb-3">
+                      <label for="categoryId" class="form-label">Category <span class="text-danger">*</span></label>
+                      <div *ngIf="!isEditMode; else readOnlyCategory">
+                        <div class="input-group">
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            placeholder="Search categories..."
+                            (input)="onCategorySearch($event)">
+                          <select class="form-select" 
+                                  id="categoryId" 
+                                  formControlName="categoryId"
+                                  [ngClass]="{'is-invalid': isFieldInvalid('categoryId')}">
+                            <option value="">Select a category</option>
+                            <option *ngFor="let category of filteredCategories" [value]="category.categoryId">{{category.name}}</option>
+                          </select>
+                        </div>
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('categoryId')">
+                          {{getErrorMessage('categoryId')}}
+                        </div>
+                      </div>
+                      <ng-template #readOnlyCategory>
+                        <div class="form-control-plaintext text-muted">
+                          {{ getCategoryName(productForm.get('categoryId')?.value) }}
+                        </div>
+                      </ng-template>
+                    </div>
+
+                    <!-- Subcategory -->
+                    <div class="col-md-4 mb-3">
+                      <label for="subcategoryId" class="form-label">Subcategory <span class="text-danger">*</span></label>
+                      <div *ngIf="!isEditMode; else readOnlySubcategory">
+                        <select class="form-select" 
+                                id="subcategoryId" 
+                                formControlName="subcategoryId"
+                                [ngClass]="{'is-invalid': isFieldInvalid('subcategoryId')}" 
+                                [disabled]="!productForm.get('categoryId')?.value">
+                          <option value="">Select a subcategory</option>
+                          <option *ngFor="let subcategory of subcategories" [value]="subcategory.subcategoryId">
+                            {{subcategory.name}}
+                          </option>
+                        </select>
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('subcategoryId')">
+                          {{getErrorMessage('subcategoryId')}}
+                        </div>
+                      </div>
+                      <ng-template #readOnlySubcategory>
+                        <div class="form-control-plaintext text-muted">
+                          {{ getSubcategoryName(productForm.get('subcategoryId')?.value) }}
+                        </div>
+                      </ng-template>
+                    </div>
+
+                    <!-- Seller with Search -->
+                    <!-- <div class="col-md-4 mb-3">
+                      <label for="sellerId" class="form-label">Seller <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          placeholder="Search sellers..."
+                          (input)="onSellerSearch($event)">
+                        <select class="form-select" 
+                                id="sellerId" 
+                                formControlName="sellerId"
+                                [ngClass]="{'is-invalid': isFieldInvalid('sellerId')}">
+                          <option value="">Select a seller</option>
+                          <option *ngFor="let seller of filteredSellers" [value]="seller.sellerId">
+                            {{seller.name}}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="invalid-feedback" *ngIf="isFieldInvalid('sellerId')">
+                        {{getErrorMessage('sellerId')}}
+                      </div>
+                    </div> -->
+                  </div>
+
+                  <!-- Has Variants Switch -->
+                  <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="hasVariants" formControlName="hasVariants">
+                    <label class="form-check-label" for="hasVariants">This product has variants</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Variants Section -->
+              <div class="card mb-4" *ngIf="productForm.get('hasVariants')?.value">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Product Variants</h5>
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addVariant()">
+                    <i class="bi bi-plus-circle me-1"></i>Add Variant
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div formArrayName="variants">
+                    <div *ngFor="let variant of variants.controls; let i = index" [formGroupName]="i" class="border rounded p-3 mb-3">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Variant #{{i + 1}}</h6>
+                        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeVariant(i)" [disabled]="variants.length === 1">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+
+                      <!-- Variant Name -->
+                      <div class="mb-3">
+                        <label [for]="'variantName' + i" class="form-label">Variant Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" [id]="'variantName' + i" formControlName="variantName"
+                               [ngClass]="{'is-invalid': isVariantFieldInvalid(i, 'variantName')}">
+                        <div class="invalid-feedback" *ngIf="isVariantFieldInvalid(i, 'variantName')">
+                          Variant name is required
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <!-- Price -->
+                        <div class="col-md-6 mb-3">
+                          <label [for]="'price' + i" class="form-label">Price <span class="text-danger">*</span></label>
+                          <input type="number" class="form-control" [id]="'price' + i" formControlName="price"
+                                 [ngClass]="{'is-invalid': isVariantFieldInvalid(i, 'price')}">
+                          <div class="invalid-feedback" *ngIf="isVariantFieldInvalid(i, 'price')">
+                            Valid price is required
+                          </div>
+                        </div>
+
+                        <!-- Discount Percentage -->
+                        <div class="col-md-6 mb-3">
+                          <label [for]="'discountPercentage' + i" class="form-label">Discount %</label>
+                          <input type="number" class="form-control" [id]="'discountPercentage' + i" formControlName="discountPercentage"
+                                 [ngClass]="{'is-invalid': isVariantFieldInvalid(i, 'discountPercentage')}">
+                          <div class="invalid-feedback" *ngIf="isVariantFieldInvalid(i, 'discountPercentage')">
+                            Discount must be between 0 and 100
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <!-- Stock -->
+                        <div class="col-md-6 mb-3">
+                          <label [for]="'stockQuantity' + i" class="form-label">Stock <span class="text-danger">*</span></label>
+                          <input type="number" class="form-control" [id]="'stockQuantity' + i" formControlName="stockQuantity"
+                                 [ngClass]="{'is-invalid': isVariantFieldInvalid(i, 'stockQuantity')}">
+                          <div class="invalid-feedback" *ngIf="isVariantFieldInvalid(i, 'stockQuantity')">
+                            Valid stock quantity is required
+                          </div>
+                        </div>
+
+                        <!-- SKU -->
+                        <div class="col-md-6 mb-3">
+                          <label [for]="'sku' + i" class="form-label">SKU <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" [id]="'sku' + i" formControlName="sku"
+                                 [ngClass]="{'is-invalid': isVariantFieldInvalid(i, 'sku')}">
+                          <div class="invalid-feedback" *ngIf="isVariantFieldInvalid(i, 'sku')">
+                            SKU is required
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label [for]="'variantImage' + i" class="form-label">Variant Image</label>
+                        <input type="file" 
+                               class="form-control" 
+                               [id]="'variantImage' + i" 
+                               accept="image/*"
+                               (change)="onVariantImageSelected($event, i)">
+                        
+                        <!-- Variant Image Preview -->
+                        <div class="border rounded p-2 text-center mt-2" *ngIf="getVariantFormGroup(i).get('variantImageBase64')?.value">
+                          <img [src]="getVariantFormGroup(i).get('variantImageBase64')?.value" 
+                               class="img-fluid" 
+                               style="max-height: 100px;"
+                               alt="Variant preview">
+                        </div>
+                        <div class="text-muted small mt-1" *ngIf="!getVariantFormGroup(i).get('variantImageBase64')?.value">
+                          No variant image selected
+                        </div>
+                      </div>
+                      
+
+                      <!-- Default Variant Radio -->
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" [name]="'isDefault' + i" [id]="'defaultVariant' + i"
+                               formControlName="isDefault" [value]="true" (change)="onDefaultVariantChange(i)">
+                        <label class="form-check-label" [for]="'defaultVariant' + i">
+                          Set as default variant
+                        </label>
+                      </div>
+
+                      <!-- Available Switch -->
+                      <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" [id]="'isAvailable' + i" formControlName="isAvailable">
+                        <label class="form-check-label" [for]="'isAvailable' + i">Variant is available</label>
+                      </div>
+
+                      <!-- Variant Attributes -->
+                      <div class="card mb-3">
+                        <div class="card-header bg-light">
+                          <h6 class="mb-0">Variant Attributes</h6>
+                        </div>
+                        <div class="card-body">
+                          <div formArrayName="attributeValues">
+                            <div *ngFor="let attrControl of getVariantAttributeValues(i).controls; let j = index" [formGroupName]="j">
+                              <app-dynamic-attribute-input
+                                [formGroup]="getAttributeControl(i, j)"
+                                [attributeName]="getVariantAttributeValue(i, j, 'attributeName')"
+                                [attributeType]="getVariantAttributeValue(i, j, 'attributeType')"
+                                [options]="getVariantAttributeValue(i, j, 'options')"
+                                [isRequired]="true">
+                              </app-dynamic-attribute-input>
+                              <div class="invalid-feedback" *ngIf="isVariantAttributeInvalid(i, j)">
+                                {{getVariantAttributeErrorMessage(i, j)}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- No variants message -->
+                    <div *ngIf="variants.length === 0" class="text-center py-4">
+                      <p class="text-muted mb-0">No variants added yet. Click "Add Variant" to create one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing and Stock -->
+            <div class="col-md-4">
+              <div class="card mb-4" *ngIf="!productForm.get('hasVariants')?.value">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Pricing & Stock</h5>
+                </div>
+                <div class="card-body">
+                  <!-- Base Price -->
+                  <div class="mb-3">
+                    <label for="basePrice" class="form-label">Base Price <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="basePrice" formControlName="basePrice"
+                           [ngClass]="{'is-invalid': isFieldInvalid('basePrice')}">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('basePrice')">
+                      {{getErrorMessage('basePrice')}}
+                    </div>
+                  </div>
+
+                  <!-- Discount -->
+                  <div class="mb-3">
+                    <label for="discountPercentage" class="form-label">Discount Percentage</label>
+                    <input type="number" 
+                           class="form-control" 
+                           id="discountPercentage" 
+                           formControlName="discountPercentage"
+                           [ngClass]="{'is-invalid': isFieldInvalid('discountPercentage')}">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('discountPercentage')">
+                      {{getErrorMessage('discountPercentage')}}
+                    </div>
+                  </div>
+
+                  <!-- Stock -->
+                  <div class="mb-3">
+                    <label for="stockQuantity" class="form-label">Stock Quantity <span class="text-danger">*</span></label>
+                    <input type="number" 
+                           class="form-control" 
+                           id="stockQuantity" 
+                           formControlName="stockQuantity"
+                           [ngClass]="{'is-invalid': isFieldInvalid('stockQuantity')}">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('stockQuantity')">
+                      {{getErrorMessage('stockQuantity')}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dynamic Attributes -->
+              <div class="card mb-4 variants-card" *ngIf="!productForm.get('hasVariants')?.value && attributeValues.controls.length > 0">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Product Attributes</h5>
+                </div>
+                <div class="card-body">
+                  <div formArrayName="attributeValues">
+                    <div *ngFor="let attrControl of attributeValues.controls; let i = index" [formGroupName]="i" class="mb-3">
+                      <app-dynamic-attribute-input 
+                        [formGroup]="getAttributeFormGroup(i)"
+                        [attributeName]="getAttributeValue(i, 'attributeName')"
+                        [attributeType]="getAttributeValue(i, 'attributeType')"
+                        [options]="getAttributeValue(i, 'options')"
+                        >
+                      </app-dynamic-attribute-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              
+
+              <div class="card mb-4">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Product Images</h5>
+                </div>
+                <div class="card-body">
+                  <!-- Main Image -->
+                  <div class="mb-3">
+                    <label for="mainImage" class="form-label">Main Product Image <span class="text-danger">*</span></label>
+                    <input type="file" 
+                           class="form-control" 
+                           id="mainImage" 
+                           accept="image/*"
+                           (change)="onMainImageSelected($event)"
+                           [ngClass]="{'is-invalid': isFieldInvalid('mainImageFile')}">
+                    
+                    <!-- Main Image Preview -->
+                    <div class="border rounded p-2 text-center mt-2" *ngIf="imagePreview">
+                      <img [src]="imagePreview" 
+                           class="img-fluid" 
+                           style="max-height: 200px;"
+                           alt="Main product image">
+                    </div>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('mainImageFile')">
+                      {{getErrorMessage('mainImageFile')}}
+                    </div>
+                  </div>
+                  
+                  <!-- Additional Images -->
+                  <div class="mb-3">
+                    <label class="form-label d-flex justify-content-between align-items-center">
+                      <span>Additional Images (Max: {{maxAdditionalImages}})</span>
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addImageInput()" [disabled]="additionalImageInputs.length >= maxAdditionalImages">
+                        <i class="bi bi-plus-circle me-1"></i>Add Image
+                      </button>
+                    </label>
+                    
+                    <div class="row g-2">
+                      <div class="col-md-6 mb-2" *ngFor="let input of additionalImageInputs; let i = index">
+                        <div class="border rounded p-2">
+                          <div class="mb-2">
+                            <input type="file" 
+                                   class="form-control form-control-sm" 
+                                   accept="image/*"
+                                   (change)="onAdditionalImageSelected($event, i)">
+                          </div>
+                          
+                          <!-- Image Preview -->
+                          <div class="text-center mb-2" *ngIf="additionalImagePreviews[i]">
+                            <img [src]="additionalImagePreviews[i]" 
+                                 class="img-fluid" 
+                                 style="max-height: 100px;"
+                                 alt="Additional product image">
+                          </div>
+                          
+                          <button type="button" class="btn btn-sm btn-outline-danger w-100" (click)="removeAdditionalImageInput(i)">
+                            <i class="bi bi-trash me-1"></i>Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Availability -->
+              <div class="card mb-4">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Availability</h5>
+                </div>
+                <div class="card-body">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="isAvailable" formControlName="isAvailable">
+                    <label class="form-check-label" for="isAvailable">Product is available for sale</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="row mt-4 mb-5">
+                      <div class="col">
+                        <div class="d-flex justify-content-end gap-2">
+                          <button type="button" class="btn btn-outline-secondary" routerLink="/admin/products">
+                            Cancel
+                          </button>
+                          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                            <i class="bi" [ngClass]="{'bi-check-circle': isEditMode, 'bi-plus-circle': !isEditMode}"></i>
+                            {{isEditMode ? 'Update' : 'Create'}} Product
+                          </button>
+                        </div>
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

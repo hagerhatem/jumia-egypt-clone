@@ -1,0 +1,277 @@
+ /* General styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+ /* Subscribe section styles */
+.subscribe-section {
+  background-color: #303030;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+
+  h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+}
+
+.email-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.email-input {
+  padding: 12px 15px;
+  border: none;
+  flex-grow: 1;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  background-color: white;
+
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-left: 8px;
+    font-size: 14px;
+  }
+}
+
+.email-icon {
+  color: #999;
+  font-size: 16px;
+}
+
+.subscribe-btn {
+  padding: 12px 20px;
+  background-color: #f68b1e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #e67e00;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+
+  input {
+    margin-right: 8px;
+  }
+}
+
+.legal-link {
+  color: #f68b1e;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.app-download {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.app-info {
+  margin-right: 15px;
+  text-align: left;
+
+  h4 {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 12px;
+  }
+}
+
+.app-buttons {
+  display: flex;
+
+  .app-button {
+    height: 20px;
+    margin-left: 10px;
+  }
+}
+
+ /* Main footer styles */
+.main-footer {
+  background-color: #535357;
+  color: white;
+  padding: 30px 0;
+}
+
+.footer-columns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-column {
+  width: 100%;
+  margin-bottom: 25px;
+  padding: 0 15px;
+
+  h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .second-header {
+    margin-top: 20px;
+  }
+
+  ul {
+    list-style: none;
+
+    li {
+      margin-bottom: 8px;
+
+      a {
+        color: #ccc;
+        text-decoration: none;
+        font-size: 14px;
+
+        &:hover {
+          color: white;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 8px;
+
+  a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+
+    &:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Social section styles */
+.social-section {
+  background-color: #535357;
+  padding: 20px 0;
+  border-top: 1px solid #666;
+}
+
+.social-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.social-links {
+  display: flex;
+  margin-bottom: 15px;
+
+  h3 {
+    font-size: 16px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    color: white;
+  }
+}
+
+.social-icon {
+  width: 35px;
+  height: 35px;
+  /* background-color: #444; */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  cursor: pointer;
+  text-decoration: none;
+
+  i {
+    color: white;
+  }
+
+  &:hover {
+    background-color: #666;
+  }
+}
+
+.payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  h3 {
+    font-size: 16px;
+    margin-right: 15px;
+    white-space: nowrap;
+    color: white;
+  }
+}
+
+.payment-icon {
+  height: 30px;
+  margin-right: 15px;
+  /* background-color: #fff; */
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .footer-column {
+    width: 48%;
+  }
+}
+
+@media (min-width: 992px) {
+  .footer-column {
+    width: 22%;
+  }
+}

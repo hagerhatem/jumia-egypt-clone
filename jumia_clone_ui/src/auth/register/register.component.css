@@ -1,0 +1,199 @@
+/* register.component.css */
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+  }
+  /* register.component.css */
+.input-error {
+  border: 1px solid #ff4444 !important;
+}
+
+.error-container {
+  margin-top: 4px;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.error-message::before {
+  content: "!";
+  color: #ff4444;
+  font-weight: bold;
+}
+  
+  .jumia-brand {
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .jumia-logo-image {
+    width: 60px;
+    height: auto;
+  }
+  
+  .register-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px;
+  }
+  
+  .register-card h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 25px;
+    text-align: left;
+  }
+  .btn-facebook {
+    width: 100%;
+    background-color: #1877f2;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .name-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #ff9900;
+    box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
+    outline: none;
+  }
+  
+  .btn-continue {
+    width: 100%;
+    background-color: #ff9900;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-continue:hover:not(:disabled) {
+    background-color: #e68a00;
+  }
+  
+  .btn-continue:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .terms {
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+    margin: 25px 0;
+    line-height: 1.5;
+  }
+  
+  .terms-link {
+    color: #ff9900;
+    text-decoration: none;
+  }
+  
+  .support-links {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-top: 25px;
+  }
+  
+  .support-links a {
+    color: #ff9900;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .invalid-feedback {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .is-invalid {
+    border-color: #dc3545 !important;
+  }
+  
+  @media (max-width: 768px) {
+    .name-fields {
+      grid-template-columns: 1fr;
+    }
+    
+    .register-card {
+      padding: 20px;
+    }
+    
+    .jumia-logo-image {
+      width: 120px;
+    }
+  }
+  .error-container {
+    margin-top: 4px;
+  }
+  
+  .error-message {
+    color: #ff4444;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+  }
+  
+  .error-message::before {
+    content: "!";
+    color: #ff4444;
+    font-weight: bold;
+  }
+  
+  .input-error {
+    border: 1px solid #ff4444 !important;
+  }

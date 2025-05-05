@@ -1,0 +1,38 @@
+<!-- components/product-card/product-card.component.html -->
+<div class="product-card">
+    <div class="product-image">
+      <img [src]="product.main_image_url" [alt]="product.name">
+      <div *ngIf="product.discount_percentage > 0" class="discount-badge">
+        -{{ getDiscountPercent() }}%
+      </div>
+    </div>
+    
+    <div class="product-info">
+      <!-- Seller name -->
+      <div class="seller-name">{{ product.seller.business_name }}</div>
+      
+      <!-- Product name -->
+      <h3 class="product-name">{{ product.name }}</h3>
+      
+      <!-- Price info -->
+      <div class="price-container">
+        <div class="current-price">{{ formatPrice(product.final_price) }}</div>
+        <div *ngIf="product.discount_percentage > 0" class="price-details">
+          <span class="original-price">{{ formatPrice(product.base_price) }}</span>
+          <span class="discount-text">-{{ getDiscountPercent() }}%</span>
+        </div>
+      </div>
+      
+      <!-- Rating -->
+      <div class="rating">
+        <div class="stars">
+          <!-- Fixed version without ngClass -->
+          <span *ngFor="let i of [1,2,3,4,5]" class="star {{ i <= product.average_rating ? 'filled' : '' }}">★</span>
+        </div>
+        <span class="rating-text">({{ product.average_rating.toFixed(1) }})</span>
+      </div>
+      
+      <!-- Category -->
+      <div class="category">{{ product.subcategory.name }}</div>
+    </div>
+  </div>

@@ -1,0 +1,174 @@
+<!-- category.component.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Custom notification similar to product-variant-modal -->
+<div *ngIf="showNotification" 
+     class="fixed top-0 left-0 right-0 z-9999 flex items-center justify-between py-1 px-5"
+     [ngClass]="{
+       'bg-green-500': notificationType === 'success', 
+       'bg-yellow-500': notificationType === 'warning',
+       'bg-red-500': notificationType === 'error'
+     }">
+  <div class="flex items-center text-white">
+    <svg *ngIf="notificationType === 'success'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <svg *ngIf="notificationType === 'warning' || notificationType === 'error'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    </svg>
+    <span>{{ notificationMessage }}</span>
+  </div>
+  <i class="fa fa-times text-white cursor-pointer" (click)="hideNotification()"></i>
+</div>
+
+<app-up-arrow> </app-up-arrow>
+
+<app-product-variant-modal
+  [productId]="selectedProductId"
+  [isOpen]="showVariantModal"
+  (onClose)="closeVariantModal()"
+  (onAddToCart)="handleModalAddToCart($event)">
+</app-product-variant-modal>
+
+<div class="category-page-container">
+  <!-- Category Header -->
+  <div class="category-header">
+    <h1 class="category-title">{{ categoryName }}</h1>
+    <div class="breadcrumb">
+      <a [routerLink]="['/']">Home</a> / <span>{{ categoryName }}</span>
+    </div>
+  </div>
+
+  <!-- Subcategories buttons -->
+  <div class="subcategories-container">
+    <button 
+      class="subcategory-btn" 
+      [class.active]="selectedSubcategoryId === ''"
+      (click)="showAllProducts()">
+      All
+    </button>
+    <button 
+      *ngFor="let subcategory of subcategories" 
+      class="subcategory-btn" 
+      [class.active]="selectedSubcategoryId === subcategory.subcategoryId.toString()"
+      (click)="filterBySubcategory(subcategory.subcategoryId.toString())">
+      {{ subcategory.name }}
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <i class="fas fa-spinner fa-spin"></i> Loading products...
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+  </div>
+
+  <!-- Products grid -->
+  <div *ngIf="!loading && !error" class="products-grid">
+    <!-- No products message -->
+    <div *ngIf="filteredProducts.length === 0" class="no-products-container">
+      <div class="no-products-icon">
+        <i class="fas fa-search"></i>
+      </div>
+      <h3 class="no-products-title">No products available</h3>
+      <p class="no-products-message">We couldn't find any products in this category at the moment.</p>
+      <button class="continue-shopping-btn" (click)="navigateToHome()">Continue Shopping</button>
+    </div>
+
+    <!-- Product cards -->
+    <div *ngFor="let product of displayedProducts" class="product-card">
+      <div (click)="navigateToProductDetails(product.productId)">
+        <!-- Discount badge -->
+        <div class="discount-badge" *ngIf="product.discountPercentage > 0">
+          -{{ product.discountPercentage }}%
+        </div>
+        
+        <!-- Wishlist icon -->
+        <div class="wishlist-icon" (click)="toggleWishlist($event, product.productId)">
+          <i class="fa-heart" [ngClass]="{'fas': isInWishlist(product.productId), 'far': !isInWishlist(product.productId)}"></i>
+        </div>
+        
+        <!-- Product image -->
+        <div class="product-image">
+          <img [src]="getFullImageUrl(product.mainImageUrl)" [alt]="product.name">
+        </div>
+        
+        <!-- Product info -->
+        <div class="product-info">
+          <h3 class="product-name">{{ product.name }}</h3>
+          
+          <!-- Star rating -->
+          <div class="product-rating" *ngIf="product.averageRating">
+            <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+              <i class="fas fa-star star" [class.filled]="i <= product.averageRating"></i>
+            </ng-container>
+            <span *ngIf="product.averageRating" class="rating-count">({{ product.averageRating }})</span>
+          </div>
+          
+          <div class="product-price">
+            <span class="final-price">EGP {{ product.finalPrice }}</span>
+            <span class="base-price" *ngIf="product.discountPercentage > 0">EGP {{ product.basePrice }}</span>
+          </div>
+          
+          <!-- Seller info -->
+          <div class="seller-info" *ngIf="product.sellerName">
+            Sold by: {{ product.sellerName }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Add to cart button -->
+      <button 
+        class="add-to-cart-btn" 
+        [disabled]="addingToCart[product.productId]"
+        (click)="openVariantModal($event, product.productId)">
+        <span *ngIf="!addingToCart[product.productId]">Add to cart</span>
+        <span *ngIf="addingToCart[product.productId]">
+          <i class="fas fa-spinner fa-spin"></i> Adding...
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div *ngIf="!loading && !error && totalItems > 0" class="pagination-container">
+    <div class="pagination-info">
+      Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} products
+    </div>
+    
+    <div class="pagination-controls">
+      <!-- Previous page button -->
+      <button 
+        class="pagination-btn prev" 
+        [disabled]="currentPage === 1"
+        (click)="prevPage()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      
+      <!-- Page numbers -->
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of pages" 
+          class="page-number" 
+          [class.active]="page === currentPage"
+          [class.ellipsis]="page < 0"
+          [disabled]="page < 0"
+          (click)="goToPage(page)">
+          <span *ngIf="page > 0">{{ page }}</span>
+          <span *ngIf="page < 0">...</span>
+        </button>
+      </div>
+      
+      <!-- Next page button -->
+      <button 
+        class="pagination-btn next" 
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

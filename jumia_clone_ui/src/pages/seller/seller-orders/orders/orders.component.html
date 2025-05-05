@@ -1,0 +1,517 @@
+
+<!-- order-management.component.html -->
+<div class="d-flex">
+  <!-- Sidebar Navigation -->
+  <app-sidebar [collapsed]="isCollapsed" (toggle)="toggleSidebar()" [class.show]="showSidebar"></app-sidebar>
+
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid px-4 py-3">
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-3">
+        <button class="btn p-0 me-3">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+              <a href="#" class="text-decoration-none">Orders</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Pending</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- Status Filters -->
+      <div class="mb-3">
+        <div class="d-flex align-items-center mb-2">
+          <small class="text-muted me-3">STATUS</small>
+          <div class="d-flex flex-wrap gap-1">
+            <ng-container
+              *ngFor="
+                let tab of statusTabs;
+                let i = index;
+                trackBy: trackByStatusTab
+              "
+            >
+              <button
+                class="btn btn-sm border-0 status-tab"
+                [class.active]="tab.active"
+                (click)="selectTab(i)"
+              >
+                {{ tab.name }}
+                {{ tab.count !== null ? "(" + tab.count + ")" : "" }}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <small class="text-muted me-3">COUNTRY</small>
+          <button class="filter-button me-4" (click)="openCountryFilter()">
+            <i class="bi bi-plus-circle"></i> Click to choose
+          </button>
+
+          <small class="text-muted me-3">DATE</small>
+          <button class="filter-button" (click)="openDateFilter()">
+            <i class="bi bi-plus-circle"></i> Click to choose
+          </button>
+        </div>
+      </div>
+
+      <!-- Search and Action Bar -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <!-- Order Actions Dropdown -->
+          <div class="dropdown me-2" ngbDropdown>
+            <button
+              class="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              ngbDropdownToggle
+            >
+              Order actions
+            </button>
+            <ul class="dropdown-menu" ngbDropdownMenu>
+              <ng-container
+                *ngFor="let action of orderActions; trackBy: trackByAction"
+              >
+                <li>
+                  <button
+                    class="dropdown-item"
+                    (click)="
+                      selectedOrders.length
+                        ? executeBulkAction(action.action)
+                        : null
+                    "
+                    [class.disabled]="!selectedOrders.length"
+                  >
+                    <i class="bi {{ action.icon }} me-2"></i>
+                    {{ action.name }}
+                  </button>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+
+          <!-- Selected Orders Count -->
+          <span class="badge bg-primary" *ngIf="selectedOrders.length > 0"
+            >{{ selectedOrders.length }} selected</span
+          >
+        </div>
+
+        <!-- Search Bar (Desktop) -->
+        <div class="d-none d-md-block search-container">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search by order number"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="updateSearchQuery($event)"
+            />
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="searchOrders()"
+            >
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right side actions -->
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-outline-secondary me-2"
+            (click)="toggleSidebar('all')"
+          >
+            <i class="bi bi-funnel"></i> Filters
+          </button>
+          <button class="export" (click)="exportOrders()">
+            <i class="bi bi-download me-1"></i>
+            Export
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Bar (Mobile) -->
+      <div class="d-md-none mb-3">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by order number"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="updateSearchQuery($event)"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="searchOrders()"
+          >
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        [checked]="
+                          selectedOrders.length === filteredOrders.length
+                        "
+                        [indeterminate]="
+                          selectedOrders.length > 0 &&
+                          selectedOrders.length < filteredOrders.length
+                        "
+                        (change)="selectAll($event)"
+                      />
+                    </div>
+                  </th>
+                  <ng-container
+                    *ngFor="let column of columns; trackBy: trackByColumn"
+                  >
+                    <th
+                      [class.sortable]="column.sortable"
+                      (click)="column.sortable && sortOrders(column.name)"
+                    >
+                      {{ column.name }}
+                      <i
+                        class="bi"
+                        *ngIf="column.sortable"
+                        [ngClass]="{
+                          'bi-arrow-up': column.sortDirection === 'asc',
+                          'bi-arrow-down': column.sortDirection === 'desc'
+                        }"
+                      ></i>
+                    </th>
+                  </ng-container>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="isLoading">
+                  <td
+                    [attr.colspan]="columns.length + 1"
+                    class="text-center py-5"
+                  >
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+                <ng-container *ngIf="!isLoading">
+                  <tr *ngIf="filteredOrders.length === 0">
+                    <td
+                      [attr.colspan]="columns.length + 1"
+                      class="text-center py-5 text-muted"
+                    >
+                      No orders to display
+                    </td>
+                  </tr>
+                  <ng-container *ngIf="filteredOrders.length > 0">
+                    <tr
+                      *ngFor="
+                        let order of getCurrentPageOrders();
+                        trackBy: trackByOrderNumber
+                      "
+                    >
+                      <td>
+                        <div class="form-check">
+                          <input
+                            type="checkbox"
+                            class="form-check-input"
+                            [checked]="order.selected"
+                            (change)="toggleOrderSelection(order)"
+                          />
+                        </div>
+                      </td>
+                      <td>{{ order.orderNumber }}</td>
+                      <td>{{ order.orderDate | date : "short" }}</td>
+                      <td>{{ order.pendingSince | date : "short" }}</td>
+                      <td>{{ order.paymentMethod }}</td>
+                      <td>{{ order.price | currency }}</td>
+                      <td>{{ order.itemCount }}</td>
+                      <td>{{ order.packedItems }}</td>
+                      <td>
+                        <ng-container
+                          *ngFor="
+                            let label of order.labels;
+                            trackBy: trackByLabel
+                          "
+                        >
+                          <span class="badge bg-secondary me-1">{{
+                            label
+                          }}</span>
+                        </ng-container>
+                      </td>
+                      <td>{{ order.shipmentMethod }}</td>
+                      <td>
+                        <div class="btn-group">
+                          <button
+                            class="btn btn-sm btn-light"
+                            (click)="executeOrderAction('print', order)"
+                            title="Print labels"
+                          >
+                            <i class="bi bi-printer"></i>
+                          </button>
+                          <button
+                            class="btn btn-sm btn-light"
+                            *ngIf="order.status === 'Pending'"
+                            (click)="executeOrderAction('ready', order)"
+                            title="Set to ready"
+                          >
+                            <i class="bi bi-box-seam"></i>
+                          </button>
+                          <button
+                            class="btn btn-sm btn-light"
+                            *ngIf="order.status === 'Ready to Ship'"
+                            (click)="executeOrderAction('ship', order)"
+                            title="Ship order"
+                          >
+                            <i class="bi bi-truck"></i>
+                          </button>
+                          <button
+                            class="btn btn-sm btn-light"
+                            *ngIf="
+                              ['Pending', 'Ready to Ship'].includes(
+                                order.status
+                              )
+                            "
+                            (click)="executeOrderAction('cancel', order)"
+                            title="Cancel order"
+                          >
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="pagination-info">
+          Showing {{ (currentPage - 1) * itemsPerPage() + 1 }} to
+          {{ Math.min(currentPage * itemsPerPage(), totalItems) }} of
+          {{ totalItems }} items
+        </div>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select form-select-sm me-3"
+            [ngModel]="itemsPerPage()"
+            (ngModelChange)="changeItemsPerPage($event)"
+          >
+            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+              {{ option }} per page
+            </option>
+          </select>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(1)">First</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)"
+                  >Previous</a
+                >
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="
+                  currentPage >= Math.ceil(totalItems / itemsPerPage())
+                "
+              >
+                <a class="page-link" (click)="goToPage(currentPage + 1)"
+                  >Next</a
+                >
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="
+                  currentPage >= Math.ceil(totalItems / itemsPerPage())
+                "
+              >
+                <a
+                  class="page-link"
+                  (click)="goToPage(Math.ceil(totalItems / itemsPerPage()))"
+                  >Last</a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Bar has been moved from fixed position -->
+
+  <!-- Language Selector -->
+  <div class="position-fixed bottom-0 end-0 mb-3 me-4 language-selector">
+    <i class="bi bi-translate me-2"></i>
+    <span>English</span>
+    <i class="bi bi-chevron-up ms-2"></i>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="loading-overlay" *ngIf="isLoading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Filter Sidebar -->
+<div class="filter-sidebar" [class.open]="isSidebarOpen" *ngIf="isSidebarOpen">
+  <div class="filter-header">
+    <h5>Filters</h5>
+    <button type="button" class="btn-close" (click)="closeSidebar()"></button>
+  </div>
+
+  <div class="filter-body">
+    <!-- Country Filter -->
+    <div *ngIf="currentFilter === 'country'">
+      <h6>Country</h6>
+      <div class="mb-3">
+        <select
+          class="form-select"
+          [ngModel]="countryFilter()"
+          (ngModelChange)="updateCountry($event)"
+        >
+          <option value="">All Countries</option>
+          <option *ngFor="let country of countries" [value]="country">
+            {{ country }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div *ngIf="currentFilter === 'date'">
+      <h6>Date Range</h6>
+      <div class="mb-3">
+        <label class="form-label">Start Date</label>
+        <input
+          type="date"
+          class="form-control"
+          [ngModel]="dateRangeFilter().start"
+          (ngModelChange)="updateDateRange($event, dateRangeFilter().end)"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">End Date</label>
+        <input
+          type="date"
+          class="form-control"
+          [ngModel]="dateRangeFilter().end"
+          (ngModelChange)="updateDateRange(dateRangeFilter().start, $event)"
+        />
+      </div>
+    </div>
+
+    <!-- All Filters -->
+    <div *ngIf="currentFilter === 'all'">
+      <!-- Currency -->
+      <div class="currency-section mb-4">
+        <h6>CURRENCY</h6>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="currency"
+            id="usd"
+            checked
+          />
+          <label class="form-check-label" for="usd">USD</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="currency"
+            id="local"
+          />
+          <label class="form-check-label" for="local">LOCAL</label>
+        </div>
+      </div>
+
+      <!-- Printed Status -->
+      <div class="mb-4">
+        <h6>Printed</h6>
+        <select
+          class="form-select"
+          [ngModel]="printedFilter()"
+          (ngModelChange)="updatePrinted($event)"
+        >
+          <option *ngFor="let option of filterOptions.printed" [value]="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="mb-4">
+        <h6>Payment Method</h6>
+        <select
+          class="form-select"
+          [ngModel]="paymentMethodFilter()"
+          (ngModelChange)="updatePaymentMethod($event)"
+        >
+          <option
+            *ngFor="let method of filterOptions.paymentMethod"
+            [value]="method"
+          >
+            {{ method }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Shipping Info -->
+      <div class="mb-4">
+        <h6>Shipping Info</h6>
+        <select
+          class="form-select"
+          [ngModel]="shippingInfoFilter()"
+          (ngModelChange)="updateShippingInfo($event)"
+        >
+          <option
+            *ngFor="let info of filterOptions.shippingInfo"
+            [value]="info"
+          >
+            {{ info }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-footer">
+    <button class="btn btn-secondary me-2" (click)="clearFilters()">
+      Clear
+    </button>
+    <button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div
+  class="filter-backdrop"
+  [class.show]="isSidebarOpen"
+  (click)="closeSidebar()"
+  *ngIf="isSidebarOpen"
+></div>

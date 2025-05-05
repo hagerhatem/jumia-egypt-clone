@@ -1,0 +1,66 @@
+<div class="step" [ngClass]="{
+  'active': currentStep === 3,
+  'disabled': !isDeliveryConfirmed,
+  'completed': isStepCompleted
+}">
+  <h2>
+    <span class="checkmark" [ngClass]="{'completed': isStepCompleted}">
+      <i class="fas" [ngClass]="isStepCompleted ? 'fa-check-circle' : 'fa-credit-card'"></i>
+    </span>
+    <span class="step-title">Payment Method</span>
+    <button class="change-btn" 
+            (click)="editPayment()" 
+            *ngIf="isStepCompleted && !isEditingPayment">
+      Change
+    </button>
+  </h2>
+
+  <div class="step-content" [ngClass]="{'d-none': isStepCompleted && !isEditingPayment}">
+    <!-- Disabled State -->
+    <div class="step-disabled" *ngIf="!isDeliveryConfirmed">
+      <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        Please complete the delivery step first
+      </div>
+    </div>
+
+    <!-- Payment Options -->
+    <div class="payment-options" *ngIf="isDeliveryConfirmed && !isStepCompleted">
+      <div *ngFor="let method of paymentMethods" 
+           class="payment-option-card" 
+           [class.selected]="selectedPaymentMethod === method.id"
+           (click)="selectedPaymentMethod = method.id">
+        <div class="option-header">
+          <div class="option-checkbox">
+            <input type="checkbox" 
+                   [checked]="selectedPaymentMethod === method.id"
+                   (click)="$event.stopPropagation(); selectedPaymentMethod = method.id">
+          </div>
+          <div class="option-title">
+            <i class="fas {{ method.icon }}"></i>
+            <span>{{ method.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <div class="action-buttons">
+        <button class="btn-confirm" 
+                [disabled]="!selectedPaymentMethod"
+                (click)="confirmPaymentMethod()">
+          Confirm Payment Method
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed Summary -->
+  <div class="step-summary" *ngIf="isStepCompleted && !isEditingPayment">
+    <div class="selected-payment-summary">
+      <div class="summary-content">
+        <i class="fas {{ getSelectedPaymentMethod()?.icon }}"></i>
+        <span>{{ getSelectedPaymentMethod()?.name }}</span>
+      </div>
+    </div>
+  </div>
+</div>

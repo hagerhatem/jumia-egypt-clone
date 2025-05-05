@@ -1,0 +1,34 @@
+<!-- src/app/app.component.html -->
+<div class="app-container">
+  @if(!getCurrentUrl().startsWith('/admin') && !getCurrentUrl().startsWith('/seller') && !getCurrentUrl().startsWith('/checkout')) {
+    <app-header></app-header>
+  }
+  
+  <main class="main-content">
+    @if(!getCurrentUrl().startsWith('/admin') && !getCurrentUrl().startsWith('/seller') && !getCurrentUrl().startsWith('/checkout')) {
+      <div class="container">
+        <router-outlet></router-outlet>
+      </div>
+    }@else if(getCurrentUrl().startsWith('/checkout')){
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    }
+     @else {
+      <div class="admin-container" style="overflow-y: hidden; height: 100vh;">
+        <router-outlet></router-outlet>
+      </div>
+    }
+  </main>
+  
+  @if(!getCurrentUrl().startsWith('/admin') && !getCurrentUrl().startsWith('/seller') ) {
+    <app-footer></app-footer>
+  }
+  
+  <app-notification
+    *ngIf="notificationMessage"
+    [message]="notificationMessage"
+    [type]="notificationType"
+    (closed)="clearNotification()">
+  </app-notification>
+</div>

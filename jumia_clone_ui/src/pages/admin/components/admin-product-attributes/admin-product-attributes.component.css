@@ -1,0 +1,238 @@
+/* src/app/pages/admin/admin-product-attributes/admin-product-attributes.component.scss */
+:host {
+    --jumia-orange: #f68b1e;
+    --jumia-light-orange: #fff1e6;
+    --jumia-text: #333333;
+    --jumia-light-gray: #f8f9fa;
+    --jumia-border: #e9ecef;
+    
+    display: block;
+  }
+  
+  /* Main container styling */
+  .admin-product-attributes-container {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar styling */
+  .bg-dark {
+    background-color: var(--jumia-text) !important;
+  }
+  
+  /* Header styling */
+  app-admin-header {
+    border-bottom: 1px solid var(--jumia-border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  
+  /* Page title styling */
+  h2 {
+    color: var(--jumia-text);
+    font-weight: 600;
+  }
+  
+  .text-muted {
+    color: #6c757d !important;
+  }
+  
+  /* Add button styling */
+  .btn-primary {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    font-weight: 500;
+  }
+  
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: darken(#f68b1e, 10%);
+    border-color: darken(#f68b1e, 10%);
+    box-shadow: 0 0 0 0.25rem rgba(246, 139, 30, 0.25);
+  }
+  
+  /* Card styling */
+  .card {
+    border-radius: 8px;
+    border: 1px solid var(--jumia-border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  /* Search box styling */
+  .input-group .form-control {
+    border-color: var(--jumia-border);
+    box-shadow: none;
+  }
+  
+  .input-group .form-control:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 0.25rem rgba(246, 139, 30, 0.25);
+  }
+  
+  .btn-outline-secondary {
+    border-color: var(--jumia-border);
+    color: var(--jumia-text);
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: var(--jumia-light-gray);
+    color: var(--jumia-text);
+    border-color: var(--jumia-border);
+  }
+  
+  /* Table styling */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table-light {
+    background-color: var(--jumia-light-gray);
+  }
+  
+  .table th {
+    font-weight: 600;
+    color: var(--jumia-text);
+    padding: 1rem;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--jumia-border);
+  }
+  
+  .table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--jumia-border);
+  }
+  
+  .table tbody tr:hover {
+    background-color: var(--jumia-light-orange);
+  }
+  
+  /* Badge styling */
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+    border-radius: 4px;
+  }
+  
+  .badge.bg-success {
+    background-color: #28a745 !important;
+  }
+  
+  .badge.bg-secondary {
+    background-color: #6c757d !important;
+  }
+  
+  /* Button group styling */
+  .btn-group {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  
+  .btn-outline-primary {
+    border-color: var(--jumia-orange);
+    color: var(--jumia-orange);
+  }
+  
+  .btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    color: white;
+  }
+  
+  .btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  
+  .btn-outline-danger:hover, .btn-outline-danger:focus {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+  }
+  
+  /* Spinner styling */
+  .spinner-border.text-primary {
+    color: var(--jumia-orange) !important;
+  }
+  
+  /* Text truncate styling */
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Empty state styling */
+  tbody tr:first-child:last-child td.text-center {
+    padding: 3rem 0;
+    color: #6c757d;
+  }
+  
+  /* Pagination styling */
+  .pagination {
+    margin-bottom: 0;
+  }
+  
+  .pagination .page-link {
+    color: var(--jumia-text);
+    border-color: var(--jumia-border);
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    color: white;
+  }
+  
+  .pagination .page-item:not(.active) .page-link:hover {
+    background-color: var(--jumia-light-orange);
+    color: var(--jumia-orange);
+  }
+  
+  .pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: var(--jumia-border);
+  }
+  
+  .card-footer {
+    background-color: white;
+    border-top: 1px solid var(--jumia-border);
+    padding: 0.75rem 1.25rem;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--jumia-light-gray);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+  
+  /* Additional responsiveness improvements */
+  @media (max-width: 768px) {
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .btn-group .btn {
+      border-radius: 4px !important;
+      margin-bottom: 0.25rem;
+    }
+  }

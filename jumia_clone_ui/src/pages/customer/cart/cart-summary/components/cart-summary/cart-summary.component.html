@@ -1,0 +1,61 @@
+<div class="cart-summary">
+    <div class="summary-header">
+      <h2>CART SUMMARY</h2>
+    </div>
+    
+    <div class="summary-content">
+      <div class="summary-row">
+        <span class="summary-label">Subtotal</span>
+        <span class="summary-value">{{ totalPrice | currency }}</span>
+      </div>
+      
+      <div *ngIf="qualifiesForFreeShipping()" class="shipping-notice">
+        <div class="express-badge">
+          <i class="fas fa-truck-fast"></i> Jumia Express
+        </div>
+        <p>Your order qualifies for FREE SHIPPING!</p>
+      </div>
+      
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-value">{{ totalPrice | currency }}</span>
+      </div>
+      
+      <button 
+      class="checkout-btn" 
+      [disabled]="itemCount === 0" 
+      [routerLink]="['/checkout']" 
+      (click)="onProceedToCheckout()"
+      type="button">
+        CHECKOUT ({{ totalPrice | currency }})
+    </button>
+    </div>
+  </div>
+
+
+  <!-- <div class="cart-summary bg-gray-50 p-6 rounded-lg mt-6">
+    <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+    
+    <div class="flex justify-between mb-2">
+      <span>Items ({{ itemsCount }}):</span>
+      <span>{{ subtotal | currency }}</span>
+    </div>
+    
+    <div class="flex justify-between mb-2">
+      <span>Shipping:</span>
+      <span>Calculated at checkout</span>
+    </div>
+    
+    <div class="border-t border-gray-300 my-4"></div>
+    
+    <div class="flex justify-between font-bold text-lg mb-4">
+      <span>Subtotal:</span>
+      <span>{{ subtotal | currency }}</span>
+    </div>
+    
+    <button 
+      (click)="onClearCart()"
+      class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-100 mb-2">
+      Clear Cart
+    </button>
+  </div> -->

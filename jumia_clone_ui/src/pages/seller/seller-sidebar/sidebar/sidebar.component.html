@@ -1,0 +1,109 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <header class="sidebar-header">
+    <div class="branding">
+      <div class="logo-container">
+        <!-- When expanded, show the full logo with image -->
+        <ng-container *ngIf="!collapsed">
+          <img src="images/vendor-center-symbol.png" alt="VC" class="logo-img">
+          <div class="vendor-text">VENDOR CENTER</div>
+        </ng-container>
+        
+        <!-- When collapsed, show only VC text -->
+        <ng-container *ngIf="collapsed">
+          <div class="logo-text">VC</div>
+        </ng-container>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas" [ngClass]="collapsed ? 'fa-angle-double-right' : 'fa-angle-double-left'"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Rest of the template remains the same -->
+  <nav class="sidebar-nav">
+    <!-- Orders Menu -->
+    <a class="nav-item" 
+    [routerLink]="['/seller/orders']"
+    routerLinkActive="active"
+    [class.active]="activeSection === 'orders'" (click)="setActiveSection('orders')">
+      <i class="bi bi-clipboard-data fs-4"></i>
+      <span class="nav-label" *ngIf="!collapsed">Orders</span>
+    </a>
+    
+    <!-- Products Menu -->
+    <div class="nav-section">
+      <div class="nav-item expandable" [class.active]="activeSection === 'products'" (click)="toggleProducts()">
+        <i class="fas fa-box"></i>
+        <span class="nav-label" *ngIf="!collapsed">Products</span>
+        <i class="fas fa-chevron-down expand-icon" [class.rotated]="showProducts" *ngIf="!collapsed"></i>
+      </div>
+      <div class="sub-items" *ngIf="showProducts && !collapsed">
+          <a class="sub-item" 
+             [routerLink]="['/seller/manage-products']" 
+             [class.active]="activeSubSection === 'manage-products'"
+             (click)="setActiveSubSection('manage-products')">
+            <i class="fas fa-tasks"></i>
+            <span class="nav-label">Manage Products</span>
+          </a>
+          <a class="sub-item" 
+             [routerLink]="['/seller/add-product']"
+             [class.active]="activeSubSection === 'add-product'"
+             (click)="setActiveSubSection('add-product')">
+            <i class="fas fa-plus-circle"></i>
+            <span class="nav-label">Add Product</span>
+          </a>
+      </div>
+    </div>
+
+    <!-- Promotions Menu -->
+    <a class="nav-item" [class.active]="activeSection === 'promotions'" (click)="setActiveSection('promotions')">
+      <i class="bi bi-tag fs-4"></i>
+      <span class="nav-label" *ngIf="!collapsed">Promotions</span>
+    </a>
+
+    <!-- Advertise Menu -->
+    <a class="nav-item" [class.active]="activeSection === 'advertise'" (click)="setActiveSection('advertise')">
+      <i class="bi bi-megaphone fs-4"></i>
+      <span class="nav-label" *ngIf="!collapsed">Advertise your Products</span>
+    </a>
+
+    <!-- Statements Menu -->
+    <a class="nav-item" [class.active]="activeSection === 'statements'" (click)="setActiveSection('statements')">
+      <i class="fas fa-chart-bar"></i>
+      <span class="nav-label" *ngIf="!collapsed">Account Statements</span>
+    </a>
+  </nav>
+
+  <!-- Footer Section -->
+  <footer class="sidebar-footer">
+ 
+    <div class="vendor-profile">
+      <ng-container *ngIf="!loading; else loadingTpl">
+        <div *ngIf="seller && !error" class="profile-content">
+          <div class="avatar" [ngStyle]="{'background-image': seller.profileImageUrl ? 'url(' + seller.profileImageUrl + ')' : 'none'}">
+            <span *ngIf="!seller.profileImageUrl">{{seller.firstName[0]}}</span>
+          </div>
+          <div class="vendor-info" *ngIf="!collapsed">
+            <div class="vendor-name">{{seller.businessName}}</div>
+            <div class="vendor-email">{{seller.email}}</div>
+          </div>
+          <i class="fas fa-chevron-down" *ngIf="!collapsed"></i>
+        </div>
+        <div *ngIf="error" class="error-message">
+          {{error}}
+        </div>
+      </ng-container>
+      <button class="logout-button" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span *ngIf="!collapsed">Logout</span>
+      </button>
+    </div>
+  </footer>
+</aside>
+
+
+<ng-template #loadingTpl>
+  <div class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+  </div>
+</ng-template>

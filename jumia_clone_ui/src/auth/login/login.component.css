@@ -1,0 +1,174 @@
+/* Container for the login form */
+.login-container { 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center elements vertically */
+  align-items: center; /* Center elements horizontally */
+  min-height: 100vh; /* Full height of the viewport */
+  background-color: #f5f5f5;
+  padding: 20px;
+  box-sizing: border-box; /* Include padding in the total height */
+  overflow: hidden; /* Prevents content from overflowing */
+}
+
+/* Login card styles */
+.login-card {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box; /* Prevents padding from affecting width */
+  overflow-y: auto; /* Allows scrolling inside the login card if needed */
+}
+
+/* Adjustments for other elements (brand logo, buttons, etc.) */
+.jumia-logo-container {
+  display: inline-block;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.jumia-logo-image {
+  width: 60px; /* Adjust logo size */
+  height: auto;
+  vertical-align: middle;
+}
+
+/* Ensure form fields and buttons are aligned properly */
+.form-group {
+  margin-bottom: 15px; /* Reduce space between form fields */
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.btn-continue {
+  width: 100%;
+  background-color: #ff9900;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.terms, .support-links {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+}
+
+/* Handling Facebook button */
+.btn-facebook {
+  width: 100%;
+  background-color: #1877f2;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.support-links {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 25px;
+}
+
+.support-links a {
+  color: #ff9900;
+  text-decoration: none;
+  font-weight: 500;
+}
+/* Adjust invalid field feedback */
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.btn-google, .btn-facebook {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-google {
+  background: #4285f4;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.btn-facebook {
+  background: #3b5998;
+  color: white;
+}
+
+.btn-google:hover, .btn-facebook:hover {
+  opacity: 0.9;
+}
+
+.btn-google:disabled, .btn-facebook:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* Error styling */
+.input-error {
+  border: 1px solid #ff4444 !important;
+}
+
+.error-container {
+  margin-top: 4px;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.error-message::before {
+  content: "!";
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.forgot-link {
+  color: #ff4444;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.forgot-link:hover {
+  color: #cc0000;
+}

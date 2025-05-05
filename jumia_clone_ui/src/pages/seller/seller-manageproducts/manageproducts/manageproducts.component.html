@@ -1,0 +1,169 @@
+<div class="products-container">
+  <!-- Sidebar -->
+  <app-sidebar [collapsed]="isCollapsed" (toggle)="toggleSidebar()" [class.show]="showSidebar"></app-sidebar>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="header-container">
+      <!-- Hamburger menu for small screens -->
+      <button class="sidebar-toggle" (click)="toggleSidebarVisibility()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <div class="header-title">
+        <span class="products-title">Products</span>
+      </div>
+    </div>
+
+    <!-- Status Filters -->
+    <div class="status-filter-container">
+      <div class="status-label">STATUS:</div>
+      <div class="status-pills">
+        @for (status of statusFilters; track status) {
+        <button
+          class="pill-button"
+          [class.active]="isStatusActive(status)"
+          (click)="toggleStatus(status)"
+        >
+          {{ status }}
+          @if (isStatusActive(status)) {
+            <span class="check-icon">✓</span>
+          }
+        </button>
+        }
+      </div>
+      <div class="import-export-container">
+        <button
+          class="btn-import-export"
+          (click)="handleImportExport('export')"
+        >
+          <mat-icon class="import-icon">download</mat-icon>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-container">
+      <div class="search-box">
+        <input
+          type="text"
+          [value]="searchSid()"
+          (input)="onSearchSidChange($event)"
+          placeholder="Search by SID"
+          class="search-input"
+        />
+        <mat-icon class="search-icon">search</mat-icon>
+      </div>
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          [value]="searchSku()"
+          (input)="onSearchSkuChange($event)"
+          placeholder="Search by SKU"
+        />
+        <mat-icon class="search-icon" *ngIf="!searchSku()">search</mat-icon>
+        <mat-icon
+          class="search-icon clear-icon"
+          *ngIf="searchSku()"
+          (click)="clearSearch('sku')"
+        >
+          clear
+        </mat-icon>
+      </div>
+      <div class="dropdown-container">
+        <div class="dropdown" (click)="toggleDropdown()">
+          <div class="dropdown-header">
+            <span class="dropdown-text">{{ selectedCountry() || "Countries *" }}</span>
+            <span class="dropdown-icon">
+              <mat-icon>expand_more</mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="table-container">
+      @if (loading()) {
+        <div class="loading">Loading products...</div>
+      } @else if (error()) {
+        <div class="error">{{ error() }}</div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                @for (header of tableHeaders; track header) {
+                <th scope="col">{{ header }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredProducts().length) { 
+                @for (product of filteredProducts(); track product.productId) {
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.productId }}</td>
+                  <td class="text-end">
+                    {{ product.basePrice | currency }}
+                  </td>
+                  <td class="text-end">
+                    {{ product.finalPrice | currency }}
+                  </td>
+                  <td>USD</td>
+                  <td>
+                    <span class="stock-info">{{ product.stockQuantity }}</span>
+                  </td>
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatusClass(product.approvalStatus)">
+                      {{ getStatusDisplay(product.approvalStatus) }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="visibility-badge" [ngClass]="getAvailabilityClass(product.isAvailable)">
+                      {{ getAvailabilityText(product.isAvailable) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn edit" (click)="onEditProduct(product)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button class="action-btn delete" (click)="onDeleteProduct(product)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                } 
+              } @else {
+                <tr>
+                  <td colspan="9" class="no-records">No records found!</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- Import/Export Buttons at Bottom -->
+    <div class="bottom-controls">
+      <button class="import-export-btn" (click)="handleImportExport('export')">
+        IMPORT / EXPORT
+      </button>
+      <div class="export-icon-btn">
+        <mat-icon>description</mat-icon>
+      </div>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="language-selector">
+      <mat-icon>language</mat-icon>
+      <span class="language-text">English</span>
+      <mat-icon>expand_more</mat-icon>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<!-- src/app/pages/admin/admin-dashboard/admin-dashboard.component.html -->
+<div class="admin-dashboard-container">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2" style="overflow-y: hidden; height: 100vh;">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10" >
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4" style="overflow-y: auto; height: 100vh;">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>Admin Dashboard</h2>
+              <p class="text-muted">Welcome to Jumia Admin Panel</p>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Dashboard content -->
+          <div *ngIf="!isLoading && dashboardStats">
+            <app-admin-stats [stats]="dashboardStats"></app-admin-stats>
+            
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="card mb-4">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Orders</h5>
+                    <a routerLink="/admin/orders" class="btn btn-sm btn-outline-primary">View All</a>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let order of dashboardStats.recentOrders">
+                            <td>#{{order.id}}</td>
+                            <td>{{order.customerName}}</td>
+                            <td>{{order.date | date:'short'}}</td>
+                            <td>₦{{order.amount.toFixed(2)}}</td>
+                            <td>
+                              <span class="badge" [ngClass]="{
+                                'bg-success': order.status === 'completed',
+                                'bg-warning': order.status === 'pending',
+                                'bg-danger': order.status === 'cancelled',
+                                'bg-info': order.status === 'processing'
+                              }">
+                                {{order.status}}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="card mb-4">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Top Selling Products</h5>
+                    <a routerLink="/admin/products" class="btn btn-sm btn-outline-primary">View All</a>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Sold</th>
+                            <th>Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let product of dashboardStats.topProducts">
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <img [src]="product.mainImageUrl" class="img-thumbnail me-2" width="40" alt="Product image">
+                                <span>{{product.name}}</span>
+                              </div>
+                            </td>
+                            <td>₦{{product.finalPrice.toFixed(2)}}</td>
+                            <td>{{product.unitsSold}}</td>
+                            <td>₦{{(product.finalPrice * (product.unitsSold ?? 0)).toFixed(2)}}</td>                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

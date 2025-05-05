@@ -1,0 +1,177 @@
+<!-- header.component.html -->
+<!-- Top Banner - Disappears on scroll -->
+<div class="top-banner">
+  <!-- Banner content remains unchanged -->
+  <div class="flash-sale">
+    <div class="call-to-order">
+      <span>Call To Order</span>
+      <span class="phone-number">17269</span>
+    </div>
+    <div class="flash-sale-text">Flash Sale</div>
+    <div class="limited-time">Limited Time Savings!</div>
+  </div>
+  <div class="secondary-top-bar">
+    <a routerLink="/auth/register-seller" class="sell-on-jumia-link">
+    <div class="sell-on-jumia">
+      <img src="/images/header/star.png" alt="Sell Icon" class="small-icon">
+      <span>Sell on Jumia</span>
+    </div>
+  </a>
+    <div class="jumia-pay">
+      <img src="/images/jumiaLogo.png" alt="Jumia Logo" class="jumia-logo">
+      <!-- <img src="assets/icons/jumia-pay.png" alt="Jumia Pay" class="jumia-pay-logo"> -->
+    </div>
+    <!-- <div class="language-selector">
+      <span class="english">English</span>
+      <span class="arabic">عربي</span>
+    </div> -->
+  </div>
+</div>
+
+<!-- Main Header - Fixed on scroll -->
+<div class="main-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/">
+        <img src="/images/jumiaLogo.png" alt="Jumia Logo">
+      </a>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="search-box">
+      <form (submit)="onSearch($event)" class="search-form">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          name="searchQuery"
+          placeholder="Search products, brands and categories"
+          (input)="onSearchInputChange(searchQuery)">
+        <button type="submit" class="search-button">Search</button>
+      </form>
+      
+     <!-- Updated Search Results Dropdown -->
+     <div class="search-results-dropdown" *ngIf="isSearchResultsVisible">
+        <div class="loading-indicator" *ngIf="isLoading">
+          <span>Searching...</span>
+        </div>
+        
+        <ul class="search-results-list" *ngIf="!isLoading">
+          <!-- Modified search result item - whole item is clickable -->
+          <li *ngFor="let product of searchResults.slice(0, 5)" 
+              class="search-result-item"
+              (click)="navigateToProduct(product.productId)">
+            <div class="search-result-content">
+              <div class="search-result-image">
+                <img [src]="getImageUrl(product.mainImageUrl)" 
+                     [alt]="product.name" 
+                     (error)="handleImageError($event)">
+              </div>
+              <div class="search-result-details">
+                <div class="search-result-name">{{ product.name }}</div>
+                <div class="search-result-category">{{ product.subcategoryName }}</div>
+                <div class="search-result-price">
+                  <span class="final-price">{{ product.finalPrice | currency:'EGP':'symbol':'1.2-2' }}</span>
+                  <span class="base-price" *ngIf="product.discountPercentage > 0">
+                    {{ product.basePrice | currency:'EGP':'symbol':'1.2-2' }}
+                  </span>
+                  <span class="discount-badge" *ngIf="product.discountPercentage > 0">
+                    -{{ product.discountPercentage }}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          
+          <li class="view-all-results" *ngIf="searchResults.length > 5" (click)="onSearch($event)">
+            View all {{ searchResults.length }} results
+          </li>
+          
+          <li class="no-results" *ngIf="searchResults.length === 0">
+            No products found matching "{{ searchQuery }}"
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Right Navigation -->
+    <div class="right-nav">
+      <!-- Account and Cart Section -->
+      <div class="header-wrapper">
+        <div class="top-header">
+          <!-- ... existing header content ... -->
+        </div>
+        <div class="bottom-header">
+          <div class="nav-controls d-flex">
+            <!-- Account Section -->
+            <div class="account-section">
+              <div class="account-button" (click)="toggleAccountDropdown()">
+                <img src="/images/header/account.png" alt="Account" class="nav-icon">
+                <ng-container *ngIf="authService.currentUserValue; else loginText">
+                  <span>Hi, {{authService.currentUserValue.firstName}}</span>
+                </ng-container>
+                <ng-template #loginText>
+                  <span>Account</span>
+                </ng-template>
+                <i class="arrow-down"></i>
+              </div>
+              
+              <div class="account-dropdown" [class.show]="isAccountDropdownOpen">
+                <ng-container *ngIf="authService.currentUserValue; else unauthenticatedMenu">
+                  <!-- Authenticated Menu -->
+                  <ul class="account-menu">
+                    <li [routerLink]="['/account']">
+                      <img src="/images/header/account.png" alt="My Account" class="menu-icon">
+                      <span>My Account</span>
+                    </li>
+                    <li [routerLink]="['/orders']">
+                      <img src="/images/header/order.png" alt="Orders" class="menu-icon">
+                      <span>Orders</span>
+                    </li>
+                    <li [routerLink]="['/wishlist']">
+                      <img src="/images/header/wishList.png" alt="Wishlist" class="menu-icon">
+                      <span>Wishlist</span>
+                    </li>
+                    <li (click)="logout()">
+                      <img src="/images/header/account.png" alt="Logout" class="menu-icon">
+                      <span>Logout</span>
+                    </li>
+                  </ul>
+                </ng-container>
+                
+                <ng-template #unauthenticatedMenu>
+                  <!-- Unauthenticated Menu -->
+                  <div class="sign-in-button" [routerLink]="['/auth/login']">Sign In</div>
+                  <ul class="account-menu">
+                    <li [routerLink]="['/auth/register']">
+                      <img src="/images/header/account.png" alt="Register" class="menu-icon">
+                      <span>Create Account</span>
+                    </li>
+                    <li [routerLink]="['/auth/register-seller']">
+                      <img src="/images/header/star.png" alt="Seller Registration" class="menu-icon">
+                      <span>Sell on Jumia</span>
+                    </li>
+                  </ul>
+                </ng-template>
+              </div>
+            </div>
+            
+            <!-- Help -->
+            <!-- <div class="help-button">
+              <img src="/images/header/help.png" alt="Help" class="nav-icon">
+              <span>Help</span>
+              <i class="arrow-down"></i> 
+            </div> -->
+            
+            <!-- Cart -->
+            <div class="cart-button" [routerLink]="['/cart']" *ngIf="authService.isAuthenticated()">
+              <img src="/images/header/cart.png" alt="Cart" class="nav-icon">
+              <span>Cart</span>
+              <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

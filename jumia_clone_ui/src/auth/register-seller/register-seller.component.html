@@ -1,0 +1,166 @@
+<div class="register-seller-container">
+  <div class="register-form-wrapper">
+    <h2>Register as Seller</h2>
+    
+    <app-notification
+      *ngIf="errorDetails"
+      [message]="errorDetails.message"
+      [type]="errorDetails.type === 'credentials' ? 'warning' : 
+              errorDetails.type === 'network' ? 'info' : 'error'"
+      (closed)="clearError()">
+    </app-notification>
+
+    <form [formGroup]="sellerForm" (ngSubmit)="onSubmit()">
+      <div formGroupName="user">
+        <h3>User Information</h3>
+        
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && user['firstName'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && user['firstName'].errors?.['required']" class="error-message">
+              First Name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && user['lastName'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && user['lastName'].errors?.['required']" class="error-message">
+              Last Name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && user['email'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && user['email'].errors?.['required']" class="error-message">
+              Email is required
+            </div>
+            <div *ngIf="submitted && user['email'].errors?.['email']" class="error-message">
+              Email must be a valid email address
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && user['password'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && user['password'].errors?.['required']" class="error-message">
+              Password is required
+            </div>
+            <div *ngIf="submitted && user['password'].errors?.['minlength']" class="error-message">
+              Password must be at least 8 characters
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <input 
+            type="tel" 
+            id="phoneNumber" 
+            formControlName="phoneNumber" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && user['phoneNumber'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && user['phoneNumber'].errors?.['required']" class="error-message">
+              Phone Number is required
+            </div>
+            <div *ngIf="submitted && user['phoneNumber'].errors?.['pattern']" class="error-message">
+              Please enter a valid phone number
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div formGroupName="seller">
+        <h3>Business Information</h3>
+        
+        <div class="form-group">
+          <label for="businessName">Business Name</label>
+          <input 
+            type="text" 
+            id="businessName" 
+            formControlName="businessName" 
+            class="form-control" 
+            [ngClass]="{ 'input-error': submitted && seller['businessName'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && seller['businessName'].errors?.['required']" class="error-message">
+              Business Name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="businessDescription">Business Description</label>
+          <textarea 
+            id="businessDescription" 
+            formControlName="businessDescription" 
+            class="form-control" 
+            rows="4"
+            [ngClass]="{ 'input-error': submitted && seller['businessDescription'].errors }" 
+          ></textarea>
+          <div class="error-container">
+            <div *ngIf="submitted && seller['businessDescription'].errors?.['required']" class="error-message">
+              Business Description is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="businessLogo">Business Logo URL</label>
+          <input 
+            type="text" 
+            id="businessLogo" 
+            formControlName="businessLogo" 
+            class="form-control" 
+          />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Register as Seller
+        </button>
+      </div>
+      
+      <div class="links">
+        <a routerLink="/auth/register">Register as Customer</a> | 
+        <a routerLink="/auth/login">Already have an account? Login</a>
+      </div>
+    </form>
+  </div>
+</div>

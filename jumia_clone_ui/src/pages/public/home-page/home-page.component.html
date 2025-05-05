@@ -1,0 +1,143 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="mainHomeContainer container">
+
+<div class="jumia-container">
+  <!-- Left Sidebar -->  
+  <div class="sidebar">
+    <ul class="category-list">
+      <li *ngFor="let category of sidebarCategories" 
+          (click)="navigateToCategory(category)"
+          class="category-item">
+        <i [class]="category.icon"></i>&nbsp; {{ category.name }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Banner Slider -->
+    <section class="slider-section">   
+      <app-center-slider></app-center-slider>
+    </section>
+
+  </div>
+
+  <!-- Right Sidebar -->
+   <div class="wrapper-right-sidebar">
+  <div class="right-sidebar">
+    <!-- Join Jumia Section -->
+    <a href="/auth/register-seller" class="sell-on-jumia-link">
+    <div class="sidebar-section join-jumia">
+      <div class="icon-container">
+        <img src="/images/header/star.png" alt="Join Jumia Icon" width="30" height="30">
+      </div>
+      <div class="section-content">
+        <h3>Join Jumia</h3>
+        <p>as a Sales Consultant</p>
+      </div>
+    </div>
+    </a>
+
+    <!-- Sell on Jumia Section -->
+    <a href="/auth/register-seller" class="sell-on-jumia-link">
+    <div class="sidebar-section sell-jumia">
+      <div class="icon-container">
+        <img src="/images/header/money.png" alt="Sell on Jumia Icon" width="30" height="30">
+      </div>
+      <div class="section-content">
+        <h3>Sell on JUMIA</h3>
+        <p>And Grow Your Business</p>
+      </div>
+    </div>
+    </a>
+
+    <!-- Warranty Section -->
+    <a routerLink="/warranty" class="warranty-link">
+    <div class="sidebar-section warranty">
+      <div class="icon-container">
+        <img src="/images/header/warrenty.png" alt="Warranty Icon" width="30" height="30">
+      </div>
+      <div class="section-content">
+        <h3>Warranty</h3>
+        <p>On Your Purchases</p>
+      </div>
+    </div>
+    </a>
+
+    <!-- Buy Now Pay Later Banner -->
+    <div class="sidebar-banner mt-4">
+      <img src="/images/header/buyNow.PNG" alt="Buy Now Pay Later" class="banner-image">
+    </div>
+  </div>
+</div>
+</div>
+
+
+<app-promo-slider></app-promo-slider>
+
+<app-flash-sales-bannar></app-flash-sales-bannar>
+
+<app-static-container></app-static-container>
+
+<app-electronics-container></app-electronics-container>
+
+<app-two-images-bannar></app-two-images-bannar>
+
+<app-top-picks-container></app-top-picks-container>
+
+<app-trendy-outfits-container></app-trendy-outfits-container>
+
+
+<app-kitchen-container></app-kitchen-container>
+
+<app-keep-shopping></app-keep-shopping>
+
+<app-phones-container></app-phones-container>
+
+<app-decor-container></app-decor-container>
+
+
+<app-computing-container></app-computing-container>
+
+<app-top-selling></app-top-selling>
+
+<app-info></app-info>
+
+<app-chatbot></app-chatbot>
+<app-up-arrow> </app-up-arrow>
+
+<!-- pages/home/home.component.html -->
+<div class="jumia-home-container">
+    <!-- Main Carousel -->
+    <!-- <section class="main-carousel">
+      <app-carousel [images]="banners"></app-carousel>
+    </section> -->
+
+  <!--
+    <!-- Categories Section --
+    <section class="categories-section">
+
+      <!-- Loading state --
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading categories...</p>
+      </div>
+      
+      <!-- Error state --
+      <div *ngIf="!isLoading && errorMessage" class="error-container">
+        <p>{{ errorMessage }}</p>
+        <button (click)="fetchCategories()" class="retry-button">Retry</button>
+      </div>
+      
+      <!-- Categories grid --
+    </section>
+  -->
+  
+
+
+  
+
+</div>
+
+</div>

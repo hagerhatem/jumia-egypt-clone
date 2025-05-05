@@ -1,0 +1,83 @@
+<div class="step" [ngClass]="{
+  'active': currentStep === 2,
+  'disabled': !isAddressConfirmed,
+  'completed': isStepCompleted
+}">
+  <h2>
+    <span class="checkmark" [ngClass]="{'completed': isStepCompleted}">
+      <i class="fas" [ngClass]="isStepCompleted ? 'fa-check-circle' : 'fa-truck'"></i>
+    </span>
+    <span class="step-title">
+      Delivery Options
+    </span>
+    <button class="change-btn" 
+            (click)="editDelivery()" 
+            *ngIf="isStepCompleted && !isEditingDelivery">
+      Change
+    </button>
+  </h2>
+
+  <div class="step-content" [ngClass]="{'d-none': isStepCompleted && !isEditingDelivery}">
+    <!-- Disabled State -->
+    <div class="step-disabled" *ngIf="!isAddressConfirmed">
+      <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        Please complete the address step first
+      </div>
+    </div>
+
+    <!-- Delivery Options -->
+    <div class="delivery-options" *ngIf="isAddressConfirmed && !isStepCompleted">
+      <div *ngFor="let option of deliveryOptions" 
+           class="delivery-option-card" 
+           [class.selected]="selectedDeliveryOption === option.id"
+           (click)="selectDeliveryOption(option)">
+        <div class="option-header">
+          <div class="option-checkbox">
+            <input type="checkbox" 
+                   [checked]="selectedDeliveryOption === option.id"
+                   (click)="$event.stopPropagation(); selectDeliveryOption(option)">
+          </div>
+          <div class="option-title">
+            <h3>{{ option.name }}</h3>
+            <span class="badge">EGP {{ option.price }}</span>
+          </div>
+        </div>
+        
+        <div class="option-details">
+          <p class="delivery-time">
+            <i class="fas fa-clock"></i>
+            Estimated delivery: {{ option.time }}
+          </p>
+          <p class="description">{{ option.description }}</p>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <div class="action-buttons">
+        <button class="btn-confirm" 
+                [disabled]="!selectedDeliveryOption"
+                (click)="confirmDelivery()">
+          Confirm Delivery Option
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed Summary -->
+  <div class="step-summary" *ngIf="isStepCompleted && !isEditingDelivery">
+    <div class="selected-delivery-summary">
+      <div class="summary-content">
+        <h4>{{ getSelectedOption()?.name }}</h4>
+        <p class="mb-1">
+          <i class="fas fa-money-bill"></i>
+          Delivery Fee: EGP {{ getSelectedOption()?.price }}
+        </p>
+        <p class="mb-0">
+          <i class="fas fa-clock"></i>
+          Estimated Delivery Time: {{ getSelectedOption()?.time }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

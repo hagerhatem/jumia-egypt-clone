@@ -1,0 +1,40 @@
+<div class="profile-container">
+  <h1 class="profile-title">My Profile</h1>
+
+  <div class="profile-section" *ngIf="!isLoading">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-control" formControlName="firstName">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-control" formControlName="lastName">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-control" formControlName="email" readonly>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" formControlName="phoneNumber">
+      </div>
+
+      <button type="submit" 
+              class="save-button" 
+              [disabled]="!profileForm.valid || isLoading || !profileForm.dirty">
+        {{ isLoading ? 'Saving...' : 'Save Changes' }}
+      </button>
+
+      <div class="alert alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+      <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+    </form>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    Loading...
+  </div>
+</div>

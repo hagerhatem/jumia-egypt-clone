@@ -1,0 +1,139 @@
+<div class="admin-subcategory-form-container" style="overflow-y: hidden; height: 100vh;">
+    <div class="row g-0">
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>{{isEditMode ? 'Edit' : 'Add'}} Subcategory</h2>
+              <p class="text-muted">{{isEditMode ? 'Update subcategory information' : 'Create a new subcategory'}}</p>
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-outline-secondary me-2" routerLink="/admin/subcategories">
+                <i class="bi bi-arrow-left me-2"></i>Back to Subcategories
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <div class="card" *ngIf="!isLoading">
+            <div class="card-body">
+              <form [formGroup]="subcategoryForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <div class="col-md-8">
+                    <!-- Category Selection -->
+                    <div class="mb-3">
+                      <label for="categoryId" class="form-label">Parent Category <span class="text-danger">*</span></label>
+                      <select 
+                        class="form-select" 
+                        id="categoryId" 
+                        formControlName="categoryId"
+                        [ngClass]="{'is-invalid': isFieldInvalid('categoryId')}"
+                      >
+                        <option value="">Select a category</option>
+                        <option *ngFor="let category of categories" [value]="category.categoryId">
+                          {{category.name}}
+                        </option>
+                      </select>
+                      <div class="invalid-feedback" *ngIf="isFieldInvalid('categoryId')">
+                        {{getErrorMessage('categoryId')}}
+                      </div>
+                    </div>
+  
+                    <!-- Subcategory Name -->
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Subcategory Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="name" 
+                        formControlName="name"
+                        [ngClass]="{'is-invalid': isFieldInvalid('name')}"
+                      >
+                      <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+                        {{getErrorMessage('name')}}
+                      </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Description</label>
+                      <textarea 
+                        class="form-control" 
+                        id="description" 
+                        rows="4" 
+                        formControlName="description"
+                      ></textarea>
+                      <small class="text-muted">Optional. Provide a short description of the subcategory.</small>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <!-- Status -->
+                    <div class="mb-3">
+                      <label for="isActive" class="form-label">Status <span class="text-danger">*</span></label>
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive" formControlName="isActive">
+                        <label class="form-check-label" for="isActive">
+                          Subcategory is active
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- Image Upload -->
+                    <div class="mb-3">
+                      <label for="imageFile" class="form-label">Subcategory Image <span class="text-danger">*</span></label>
+                      <input 
+                        type="file" 
+                        class="form-control" 
+                        id="imageFile" 
+                        accept="image/*"
+                        (change)="onImageSelected($event)"
+                      >
+                      <small class="text-muted" *ngIf="isEditMode">
+                        Leave empty to keep the current image.
+                      </small>
+                    </div>
+                    
+                    <!-- Image Preview -->
+                    <div class="mb-3">
+                      <label class="form-label">Preview</label>
+                      <div class="border rounded p-3 d-flex justify-content-center">
+                        <img 
+                          [src]="imagePreview || 'assets/images/categories/placeholder.jpg'" 
+                          class="img-fluid" 
+                          style="max-height: 150px;" 
+                          alt="Subcategory preview"
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Submit buttons -->
+                <div class="mt-4 d-flex justify-content-end">
+                  <button type="button" class="btn btn-outline-secondary me-2" routerLink="/admin/subcategories">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary" [disabled]="subcategoryForm.invalid || isLoading">
+                    <i class="bi" [ngClass]="isEditMode ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                    {{isEditMode ? 'Update' : 'Create'}} Subcategory
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

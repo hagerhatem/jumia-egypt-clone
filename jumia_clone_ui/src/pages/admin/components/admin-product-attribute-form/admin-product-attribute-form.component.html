@@ -1,0 +1,199 @@
+<div class="admin-product-attribute-form-container" style="overflow-y: hidden; height: 100vh;">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>{{isEditMode ? 'Edit' : 'Create'}} Product Attribute</h2>
+              <p class="text-muted">{{isEditMode ? 'Update existing attribute' : 'Add a new attribute for products'}}</p>
+            </div>
+            <div class="col-auto">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary me-2" 
+                routerLink="/admin/product-attributes"
+              >
+                <i class="bi bi-arrow-left me-2"></i>Back to Attributes
+              </button>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="loading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Attribute form -->
+          <div class="card" *ngIf="!loading">
+            <div class="card-body">
+              <form [formGroup]="attributeForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <div class="col-md-6">
+                    <!-- Subcategory -->
+<div class="mb-3">
+  <label for="subcategoryId" class="form-label">Subcategory </label>
+  
+  <ng-container *ngIf="isEditMode; else subcategorySelect">
+    <div class="form-control-plaintext d-flex align-items-center" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background-color: #ddd; padding: 0 10px; height: 39px; border-radius: 5px;">
+      <span class="fw-medium">
+        {{ getSubcategoryName(attributeForm.get('subcategoryId')?.value) }}
+      </span>
+      <input type="hidden" formControlName="subcategoryId">
+    </div>
+  </ng-container>
+  
+  <ng-template #subcategorySelect>
+    <select 
+      class="form-select" 
+      id="subcategoryId" 
+      formControlName="subcategoryId"
+      [ngClass]="{'is-invalid': attributeForm.get('subcategoryId')?.invalid && attributeForm.get('subcategoryId')?.touched}"
+    >
+      <option value="">Select a subcategory</option>
+      <option *ngFor="let subcategory of subcategories" [value]="subcategory.subcategoryId">
+        {{ subcategory.name }} ({{ subcategory.categoryName }})
+      </option>
+    </select>
+  </ng-template>
+  
+  <div class="invalid-feedback" *ngIf="attributeForm.get('subcategoryId')?.invalid && attributeForm.get('subcategoryId')?.touched">
+    <span *ngIf="attributeForm.get('subcategoryId')?.errors?.['required']">Subcategory is required</span>
+  </div>
+</div>
+                    
+                    <!-- Attribute Name -->
+                    <div class="mb-3">
+                      <label for="name" class="form-label">Attribute Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="name" 
+                        formControlName="name"
+                        [ngClass]="{'is-invalid': attributeForm.get('name')?.invalid && attributeForm.get('name')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="attributeForm.get('name')?.invalid && attributeForm.get('name')?.touched">
+                        <span *ngIf="attributeForm.get('name')?.errors?.['required']">Attribute name is required</span>
+                        <span *ngIf="attributeForm.get('name')?.errors?.['maxlength']">Attribute name cannot exceed 100 characters</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Attribute Type -->
+                    <div class="mb-3">
+                      <label for="type" class="form-label">Attribute Type <span class="text-danger">*</span></label>
+                      <select 
+                        class="form-select" 
+                        id="type" 
+                        formControlName="type"
+                        [ngClass]="{'is-invalid': attributeForm.get('type')?.invalid && attributeForm.get('type')?.touched}"
+                      >
+                        <option *ngFor="let type of attributeTypes" [value]="type">
+                          {{ type | titlecase }}
+                        </option>
+                      </select>
+                      <div class="invalid-feedback" *ngIf="attributeForm.get('type')?.invalid && attributeForm.get('type')?.touched">
+                        <span *ngIf="attributeForm.get('type')?.errors?.['required']">Attribute type is required</span>
+                      </div>
+                      <small class="form-text text-muted" *ngIf="needsPossibleValues()">
+                        This type requires possible values to be defined.
+                      </small>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <!-- Possible Values -->
+                    <div class="mb-3" *ngIf="needsPossibleValues()">
+                      <label class="form-label">Possible Values <span class="text-danger">*</span></label>
+                      <div formArrayName="possibleValuesArray">
+                        <div class="input-group mb-2" *ngFor="let value of possibleValuesArray.controls; let i = index">
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            [formControlName]="i"
+                            placeholder="Enter a possible value"
+                            [ngClass]="{'is-invalid': possibleValuesArray.at(i).invalid && possibleValuesArray.at(i).touched}"
+                          >
+                          <button 
+                            class="btn btn-outline-danger" 
+                            type="button" 
+                            (click)="removePossibleValue(i)"
+                            [disabled]="possibleValuesArray.length <= 1"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <div class="invalid-feedback" *ngIf="possibleValuesArray.at(i).invalid && possibleValuesArray.at(i).touched">
+                            Value is required
+                          </div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-outline-primary btn-sm mt-2" (click)="addPossibleValue()">
+                        <i class="bi bi-plus-circle me-1"></i> Add Another Value
+                      </button>
+                      <small class="form-text text-muted d-block mt-2">
+                        These values will be joined with commas and sent as a single string.
+                      </small>
+                    </div>
+                    
+                    <!-- Is Required -->
+                    <div class="mb-3">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isRequired" formControlName="isRequired">
+                        <label class="form-check-label" for="isRequired">
+                          Required Attribute
+                        </label>
+                      </div>
+                      <small class="form-text text-muted">
+                        If enabled, this attribute must be filled when creating products.
+                      </small>
+                    </div>
+                    
+                    <!-- Is Filterable -->
+                    <div class="mb-3">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isFilterable" formControlName="isFilterable">
+                        <label class="form-check-label" for="isFilterable">
+                          Filterable Attribute
+                        </label>
+                      </div>
+                      <small class="form-text text-muted">
+                        If enabled, customers can filter products by this attribute.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Submit buttons -->
+                <div class="mt-4 d-flex justify-content-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary me-2" 
+                    routerLink="/admin/product-attributes"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary" 
+                    [disabled]="attributeForm.invalid || submitting"
+                  >
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <i *ngIf="!submitting" class="bi" [ngClass]="isEditMode ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                    {{isEditMode ? 'Update' : 'Create'}} Attribute
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

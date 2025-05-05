@@ -1,0 +1,479 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Custom Notification -->
+<div *ngIf="showNotification" 
+     class="fixed top-0 left-0 right-0 z-9999 flex items-center justify-between py-1 px-5"
+     [ngClass]="{
+       'bg-green-500': notificationType === 'success', 
+       'bg-yellow-500': notificationType === 'warning',
+       'bg-red-500': notificationType === 'error'
+     }">
+  <div class="flex items-center text-white">
+    <svg *ngIf="notificationType === 'success'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <svg *ngIf="notificationType === 'warning' || notificationType === 'error'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    </svg>
+    <span>{{ notificationMessage }}</span>
+  </div>
+  <i class="fa fa-times text-white cursor-pointer" (click)="hideNotification()"></i>
+</div>
+
+
+<div class="product-details-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading product details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Product Content -->
+  <div *ngIf="product && !isLoading && !errorMessage">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+      <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a [routerLink]="['/category', product.categoryId]" routerLinkActive="router-link-active">{{ product.categoryName }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+      </ol>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="row">
+      <!-- Left Column - Product Images -->
+      <div class="col-md-5">
+        <!-- Main Image -->
+        <div class="main-image-container mb-3">
+          <img [src]="getFullImageUrl(selectedImage || product.mainImageUrl)" 
+               [alt]="product.name" 
+               class="product-image img-fluid">
+        </div>
+        
+        <!-- Thumbnail Gallery -->
+        <div class="thumbnail-gallery d-flex justify-content-center flex-wrap">
+          <div class="thumbnail-container m-1" 
+               *ngFor="let image of product.images"
+               (click)="selectImage(image.imageUrl)">
+            <img [src]="getFullImageUrl(image.imageUrl)" 
+                 [alt]="product.name + ' thumbnail'"
+                 class="thumbnail"
+                 [class.active]="selectedImage === image.imageUrl">
+          </div>
+        </div>
+
+        <!-- Share Section -->
+        <div class="share-container mt-4">
+          <p class="share-title mb-2">SHARE THIS PRODUCT</p>
+          <div class="social-icons">
+           <i class="bi bi-facebook ms-3 me-4"></i>
+            <i class="bi bi-twitter-x me-4"></i>
+            <i class="bi bi-whatsapp"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Product Details -->
+      <div class="col-md-7">
+        <div class="product-header d-flex justify-content-between align-items-start mb-2">
+        <!-- Product Labels -->
+        <div class="product-labels mb-2">
+          <span class="badge official me-2">Official Store</span>
+          <span class="badge nonRetunable">Get It Now</span>
+        </div>
+
+<!-- Wishlist icon (new) -->
+<div class="wishlist-icon" (click)="toggleWishlist($event, product.productId)">
+  <i class="fa-heart fa-2x" [ngClass]="{'fas': isInWishlist(product.productId), 'far': !isInWishlist(product.productId)}"></i>
+</div>
+</div>
+        <!-- Product Title -->
+        <h1 class="product-title mb-3">{{ product.name }}</h1>
+
+
+        <!-- Brand -->
+        <p class="product-brand mb-3">
+          Brand: <a href="#">{{ product.sellerName }}</a> | 
+          <a href="#">Similar products from {{ product.sellerName }}</a>
+        </p>
+
+        <!-- Ratings -->
+        <div class="product-rating mb-3 d-flex align-items-center">
+          <div class="stars me-2">
+            <i class="bi" *ngFor="let star of [1,2,3,4,5]"
+               [class.bi-star-fill]="star <= product.averageRating"
+               [class.bi-star]="star > product.averageRating">
+            </i>
+          </div>
+          <span class="rating-count">({{ product.reviewCount }} verified ratings)</span>
+        </div>
+
+       <!-- Price -->
+<div class="product-price mb-4">
+  <div class="d-flex align-items-baseline">
+    <div class="current-price fw-bold">EGP {{ currentPrice | number }}</div>
+    <small class="text-muted ms-2" *ngIf="selectedVariant">{{ selectedVariant.variantName }}</small>
+  </div>
+  <div class="price-info" *ngIf="currentDiscountPercentage > 0">
+    <span class="original-price text-decoration-line-through">EGP {{ (currentPrice / (1 - currentDiscountPercentage/100)) | number }}</span>
+    <span class="discount-badge ms-2">-{{ currentDiscountPercentage }}%</span>
+  </div>
+</div>
+
+        <!-- Stock -->
+        <p class="in-stock mb-3">
+          In stock
+        </p>
+
+        <!-- Variants Section -->
+        <div class="mb-4" *ngIf="product && product.variants && product.variants.length > 0">
+          <h5 class="variant-title mb-3">SELECT OTHER OPTIONS:</h5>
+          <div class="row g-2">
+            <div class="col-6" *ngFor="let variant of product.variants">
+              <div class="card variant-card" 
+                   [class.active]="selectedVariant?.variantId === variant.variantId"
+                   (click)="selectVariant(variant)">
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{{ variant.variantName }}</strong>
+                      <div class="small text-muted">{{ variant.sku }}</div>
+                    </div>
+                    <div class="text-end">
+                      <div class="fw-bold">${{ variant.finalPrice }}</div>
+                      <small class="text-success" *ngIf="variant.stockQuantity > 0">In Stock</small>
+                      <small class="text-danger" *ngIf="variant.stockQuantity === 0">Out of Stock</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add to Cart Button -->
+        <div class="add-to-cart-container mb-4">
+          <button class="btn-orange btn-lg w-100" 
+                  [disabled]="(selectedVariant?.stockQuantity || product.stockQuantity) === 0"
+                  (click)="addToCart()">
+            <i class="bi bi-cart me-2"></i> Add to cart
+          </button>
+        </div>
+
+        
+
+        <!-- Out of Stock Warning -->
+        <div *ngIf="(selectedVariant?.stockQuantity || product.stockQuantity) === 0" class="alert alert-warning mb-4">
+          Out of Stock
+        </div>
+
+        <!-- Promotions -->
+        <div class="promotions-container mb-4">
+          <h5 class="promotions-title mb-3">PROMOTIONS</h5>
+          <div class="promotion-item mb-2 d-flex align-items-center">
+            <i class="bi bi-credit-card text-black me-2 text-primary"></i>
+            <span>Buy Now, Pay Later. Enjoy 0% Interest on Installments</span>
+          </div>
+          <div class="promotion-item d-flex align-items-center">
+            <i class="bi bi-truck text-black me-2 text-primary"></i>
+            <span>Enjoy free delivery on orders above 400 EGP.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="row mt-4">
+      <div class="col-md-8">
+        <!-- Product Tabs -->
+        <div class="product-tabs mb-4">
+          <ul class="nav nav-tabs mb-3" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" 
+                     [class.active]="activeTab === 'details'"
+                     (click)="setActiveTab('details')" id="details-tab">
+                Product details
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" 
+                     [class.active]="activeTab === 'specs'"
+                     (click)="setActiveTab('specs')" id="specs-tab">
+                Specifications
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" 
+                     [class.active]="activeTab === 'reviews'"
+                     (click)="setActiveTab('reviews')" id="reviews-tab">
+                Verified Customer Feedback
+              </button>
+            </li>
+          </ul>
+
+          <!-- Tab Content -->
+          <div class="tab-content" id="productTabsContent">
+            <div [ngClass]="{'active': activeTab === 'details'}" class="tab-pane fade show" id="details">
+              <p>{{ product.description }}</p>
+            </div>
+            <div [ngSwitch]="activeTab">
+              <div *ngSwitchCase="'specs'" class="tab-content">
+                <div class="row">
+                  <!-- <div class="col-md-6"> -->
+                    <!-- <h5 class="mb-3">KEY FEATURES</h5> -->
+                    <!-- <ul class="list-unstyled"> -->
+                      <!-- <li *ngFor="let attr of product.attributeValues"> -->
+                        <!-- <dt>{{ attr.attributeName }}</dt> -->
+                        <!-- <dd>{{ attr.value }}</dd> -->
+                    <!-- </ul> -->
+                  <!-- </div> -->
+                  <div class="col-md-6">
+                    <dl class="row">
+                      <ng-container *ngFor="let attr of product.attributeValues">
+                        <dt class="col-sm-4 ">{{ attr.attributeName }}:</dt>
+                        <dd class="col-sm-8">{{ attr.value }}</dd>
+                      </ng-container>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- <div *ngSwitchCase="'reviews'" class="tab-content">
+                <div *ngFor="let review of reviews" class="card mb-2">
+                  <div class="card-body p-3">
+                    <div class="d-flex justify-content-between">
+                      <strong>{{ review.reviewer }}</strong>
+                      <div>★ {{ review.rating }}/5</div>
+                    </div>
+                    <p class="mb-0 mt-2">{{ review.comment }}</p>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+            <div [ngClass]="{'active': activeTab === 'reviews'}" class="tab-pane fade show" id="reviews">
+              <div class="reviews-container">
+                <div class="reviews-summary mb-4">
+                  <div class="row">
+                    <div class="col-md-3 text-center">
+                      <div class="average-rating">4.5/5</div>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                      </div>
+                      <div class="rating-count">611 verified ratings</div>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="rating-breakdown">
+                        <div class="rating-row d-flex align-items-center mb-1">
+                          <span class="me-2">5</span>
+                          <i class="bi bi-star-fill me-2"></i>
+                          <div class="progress flex-grow-1 me-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 73%"></div>
+                          </div>
+                          <span>(445)</span>
+                        </div>
+                        <div class="rating-row d-flex align-items-center mb-1">
+                          <span class="me-2">4</span>
+                          <i class="bi bi-star-fill me-2"></i>
+                          <div class="progress flex-grow-1 me-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 14%"></div>
+                          </div>
+                          <span>(87)</span>
+                        </div>
+                        <div class="rating-row d-flex align-items-center mb-1">
+                          <span class="me-2">3</span>
+                          <i class="bi bi-star-fill me-2"></i>
+                          <div class="progress flex-grow-1 me-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 4%"></div>
+                          </div>
+                          <span>(27)</span>
+                        </div>
+                        <div class="rating-row d-flex align-items-center mb-1">
+                          <span class="me-2">2</span>
+                          <i class="bi bi-star-fill me-2"></i>
+                          <div class="progress flex-grow-1 me-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 2%"></div>
+                          </div>
+                          <span>(14)</span>
+                        </div>
+                        <div class="rating-row d-flex align-items-center">
+                          <span class="me-2">1</span>
+                          <i class="bi bi-star-fill me-2"></i>
+                          <div class="progress flex-grow-1 me-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 6%"></div>
+                          </div>
+                          <span>(38)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="review-list">
+                  <div *ngFor="let review of reviews" class="review-card mb-3">
+                    <div class="review-content p-3">
+                      <div class="stars mb-2">
+                        <i class="bi bi-star-fill" *ngFor="let i of [1,2,3,4,5].slice(0, review.rating)"></i>
+                      </div>
+                      <h5 class="review-title mb-2">{{ review.comment }}</h5>
+                      <p class="review-date text-muted">By {{ review.reviewer }}</p>
+                      <div class="verified-badge">
+                        <i class="bi bi-check-circle-fill text-success me-1"></i> Verified Purchase
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mt-4">
+        <!-- Delivery & Returns -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">DELIVERY & RETURNS</h5>
+            <div class="jumia-express mb-3">
+              <!-- <img src="assets/images/jumia-express.png" alt="Jumia Express" height="20"> -->
+              <span class="express-badge">Jumia Express</span>
+              <div class="small">Express delivery in main cities.</div>
+            </div>
+            
+            <h6 class="mb-2">Choose your location</h6>
+            <select class="form-select mb-3" [(ngModel)]="selectedLocation">
+              <option *ngFor="let loc of deliveryLocations" [value]="loc.id">
+                {{ loc.name }}
+              </option>
+            </select>
+            
+            <!-- Pickup Options -->
+            <div class="delivery-option mb-3">
+              <div class="d-flex align-items-center mb-2">
+                <div class="delivery-icon me-2">
+                  <i class="bi bi-box"></i>
+                </div>
+                <div>
+                  <strong>Pickup Station</strong>
+                  <!-- <a href="#" class="ms-2 small">Details</a> -->
+                </div>
+              </div>
+              <div class="small ms-4">
+                <div>Delivery EGP 10.00 (free delivery if order above EGP 400.00)</div>
+                <div>Ready for pickup between 28 April and 29 April if you place your order within the next 17hrs 7mins</div>
+              </div>
+            </div>
+            
+            <!-- Door Delivery -->
+            <div class="delivery-option mb-3">
+              <div class="d-flex align-items-center mb-2">
+                <div class="delivery-icon me-2">
+                  <i class="bi bi-truck"></i>
+                </div>
+                <div>
+                  <strong>Door Delivery</strong>
+                  <!-- <a href="#" class="ms-2 small">Details</a> -->
+                </div>
+              </div>
+              <div class="small ms-4">
+                <div>Delivery EGP 30.00 (free delivery if order above EGP 400.00)</div>
+                <div>Ready for delivery between 28 April and 29 April if you place your order within the next 17hrs 7mins</div>
+              </div>
+            </div>
+            
+            <!-- Return Policy -->
+            <div class="return-policy">
+              <div class="d-flex align-items-center mb-2">
+                <div class="return-icon me-2">
+                  <i class="bi bi-arrow-return-left"></i>
+                </div>
+                <div>
+                  <strong>Return Policy</strong>
+                </div>
+              </div>
+              <div class="small ms-4">
+                <div>You can return your item for free within 14 days of delivery if it is eligible. Any visible defects must be reported within 48 hours. Check our return policy for Details</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+<!-- Product small card -->
+        <div class="card mt-4">
+          <div class="card-body mt-1">
+            <div class="product-name  fw-bold">
+              {{ product.name }}
+            </div>
+<!--             
+            <h5 class="card-title">SELLER INFORMATION</h5>
+            <div class="seller-name mb-2">Jumia</div> -->
+            <p class="product-brand  text-muted ">
+            <b>  Brand: </b> {{ product.sellerName }} | 
+              Similar products from {{ product.sellerName }}
+            </p>
+            <div class="product-header d-flex justify-content-between align-items-start mb-2">
+                    <!-- Ratings -->
+        <div class="product-rating d-flex align-items-center">
+          <div class="stars me-2">
+            <i class="bi" *ngFor="let star of [1,2,3,4,5]"
+               [class.bi-star-fill]="star <= product.averageRating"
+               [class.bi-star]="star > product.averageRating">
+            </i>
+          </div>
+         </div>
+
+            <div class="wishlist-icon" (click)="toggleWishlist($event, product.productId)">
+              <i class="fa-heart fa-2x" [ngClass]="{'fas': isInWishlist(product.productId), 'far': !isInWishlist(product.productId)}"></i>
+            </div>
+          </div>
+            <!-- Quick Add to Cart -->
+            <div class="quick-add-section text-center">
+              <div class="product-thumbnail mb-2">
+                <img [src]="getFullImageUrl(selectedImage || product.mainImageUrl)" class="img-fluid" style="height: 80px;">
+              </div>
+              <!-- <div class="product-name mb-2">
+                {{ product.name }}
+              </div> -->
+              <div class="product-price mb-2">
+                <div class="d-flex align-items-baseline">
+                  <strong>EGP {{ currentPrice }}</strong>
+                  <small class="text-muted ms-2" *ngIf="selectedVariant">{{ selectedVariant.variantName }}</small>
+                  <span class="text-danger ms-2" *ngIf="currentDiscountPercentage > 0">-{{ currentDiscountPercentage }}%</span>
+                </div>
+              </div>
+              <button class="btn btn-orange btn-orange-1 w-100 mt-4" (click)="addToCart()">
+                Add to cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+
+  <!-- Toast notification -->
+  <!-- Add a toast notification for confirmation -->
+  <div *ngIf="showToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        Item added to cart successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <app-keep-shopping></app-keep-shopping>
+  <app-up-arrow></app-up-arrow>
+</div>

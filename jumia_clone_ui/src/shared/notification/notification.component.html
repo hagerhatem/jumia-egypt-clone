@@ -1,0 +1,10 @@
+<!-- notification.component.html -->
+<div *ngIf="message" [class]="'notification ' + type">
+    <div class="notification-content">
+      <i class="icon">!</i>
+      <div class="message-container">
+        <span [innerHTML]="message"></span>
+      </div>
+      <button class="close-btn" (click)="close()">&times;</button>
+    </div>
+  </div>

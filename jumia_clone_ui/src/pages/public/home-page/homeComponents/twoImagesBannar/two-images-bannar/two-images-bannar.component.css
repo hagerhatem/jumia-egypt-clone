@@ -1,0 +1,74 @@
+/* two-images-banner.component.css */
+.banner-container {
+    width: 100%;
+    max-width: 2000px;
+    margin: 20px 0;
+    border-radius: 5px;
+    overflow: hidden;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  
+  
+  .banner-heading {
+    background-color: #FFF8E7;
+    padding: 15px 0;
+    text-align: center;
+    margin-bottom: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  
+  .banner-heading h2 {
+    margin: 0;
+    color: #333;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .banner-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  
+  .banner-item {
+    flex: 1;
+    min-width: 300px;
+    height: 200px;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .banner-item:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .banner-image {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .banner-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  @media (max-width: 768px) {
+    .banner-items-container {
+      flex-direction: column;
+    }
+    
+    .banner-item {
+      width: 100%;
+    }
+  }

@@ -1,0 +1,191 @@
+<div class="step" [ngClass]="{'active': currentStep === 1, 'completed': isStepCompleted}">
+  <h2>
+    <span class="checkmark" [ngClass]="{'completed': isStepCompleted}">
+      <i class="fas" [ngClass]="isStepCompleted ? 'fa-check-circle' : 'fa-home'"></i>
+    </span>
+    <span class="step-title">
+      Shipping Address
+      <i class="fa fa-home header-icon"></i>
+    </span>
+    <button class="change-btn" (click)="startNewAddress()" *ngIf="!isEditing && !isStepCompleted">
+      Change &nbsp;<i class="fas fa-edit"></i>
+    </button>
+  </h2>
+
+  <div class="step-content" [ngClass]="{'d-none': isStepCompleted}">
+    <!-- Address Selection View -->
+    <div *ngIf="!isEditing" class="address-list">
+      <!-- Loading State -->
+      <div *ngIf="isLoadingAddresses" class="text-center p-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading addresses...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading addresses...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingAddresses && addresses.length === 0" class="text-center p-4">
+        <p class="text-muted">No addresses found. Add a new address to continue.</p>
+      </div>
+
+      <!-- Address Cards -->
+      <div *ngIf="!isLoadingAddresses && addresses.length > 0">
+        <div *ngFor="let address of addresses" 
+             class="address-card" 
+             [class.selected]="selectedAddress?.addressId === address.addressId"
+             (click)="selectAddress(address)">
+          <div class="address-info">
+            <p class="address-name">{{ address.addressName }}</p>
+            <p class="street">{{ address.streetAddress }}</p>
+            <p class="location">{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+            <p class="phone">{{ address.phoneNumber }}</p>
+          </div>
+          <div class="address-actions">
+            <button class="edit-btn" (click)="editAddress(address, $event)">Edit</button>
+            <span class="default-badge" *ngIf="address.isDefault">Default</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <div class="d-flex justify-content-end mt-3" *ngIf="!isEditing && addresses.length > 0">
+        <button class="btn btn-primary" (click)="confirmStep()">
+          Confirm Address
+        </button>
+      </div>
+    </div>
+
+    <!-- New/Edit Address Form -->
+    <div *ngIf="isEditing" class="address-form">
+      <div class="form-group">
+        <label for="addressName">Address Name</label>
+        <input type="text" 
+               id="addressName" 
+               class="form-input"
+               [(ngModel)]="newAddress.addressName" 
+               placeholder="Home, Work, etc.">
+      </div>
+
+      <div class="form-group">
+        <label for="street">Street Address</label>
+        <input type="text" 
+               id="street" 
+               class="form-input"
+               [(ngModel)]="newAddress.streetAddress" 
+               placeholder="Enter street address">
+      </div>
+
+      <div class="form-group">
+        <label for="country">Country</label>
+        <div class="position-relative">
+          <select id="country" 
+                  class="form-input"
+                  [(ngModel)]="newAddress.country"
+                  (change)="onCountryChange($event)"
+                  [disabled]="isLoadingCountries">
+            <option value="">Select Country</option>
+            <option *ngFor="let country of countries" 
+                    [value]="country.name">
+              {{country.name}}
+            </option>
+          </select>
+          <div *ngIf="isLoadingCountries" class="position-absolute top-50 end-0 translate-middle-y me-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="state">State/Province</label>
+        <div class="position-relative">
+          <select id="state" 
+                  class="form-input"
+                  [(ngModel)]="newAddress.state"
+                  (change)="onStateChange($event)"
+                  [disabled]="!newAddress.country || states.length === 0 || isLoadingStates">
+            <option value="">Select State</option>
+            <option *ngFor="let state of states" 
+                    [value]="state.name">
+              {{state.name}}
+            </option>
+          </select>
+          <div *ngIf="isLoadingStates" class="position-absolute top-50 end-0 translate-middle-y me-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="city">City</label>
+        <div class="position-relative">
+          <select id="city" 
+                  class="form-input"
+                  [(ngModel)]="newAddress.city"
+                  (change)="onCityChange($event)"
+                  [disabled]="!newAddress.state || cities.length === 0 || isLoadingCities">
+            <option value="">Select City</option>
+            <option *ngFor="let city of cities" 
+                    [value]="city.name">
+              {{city.name}}
+            </option>
+          </select>
+          <div *ngIf="isLoadingCities" class="position-absolute top-50 end-0 translate-middle-y me-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="postalCode">Postal Code</label>
+        <input type="text" 
+               id="postalCode" 
+               class="form-input"
+               [(ngModel)]="newAddress.postalCode" 
+               placeholder="Enter postal code">
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" 
+               id="phone" 
+               class="form-input"
+               [(ngModel)]="newAddress.phoneNumber" 
+               placeholder="Enter phone number">
+      </div>
+
+      <div class="form-group checkbox">
+        <input type="checkbox" 
+               id="isDefault" 
+               [(ngModel)]="newAddress.isDefault">
+        <label for="isDefault">Set as default address</label>
+      </div>
+
+      <div class="form-actions">
+        <button class="save-btn" (click)="saveAddress()">
+          {{ isCreatingNew ? 'Save Address' : 'Update Address' }}
+        </button>
+        <button class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed State Summary -->
+  <div class="step-summary" *ngIf="isStepCompleted && selectedAddress">
+    <div class="selected-address-summary">
+      <p class="mb-1"><strong>{{ selectedAddress.addressName }}</strong></p>
+      <p class="mb-1">{{ selectedAddress.streetAddress }}</p>
+      <p class="mb-1">{{ selectedAddress.city }}, {{ selectedAddress.state }} {{ selectedAddress.postalCode }}</p>
+      <p class="mb-0">{{ selectedAddress.phoneNumber }}</p>
+    </div>
+  </div>
+</div>
+
+
+
+

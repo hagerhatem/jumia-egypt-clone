@@ -1,0 +1,156 @@
+<div class="admin-orders-container" style="overflow-y: hidden; height: 100vh;">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <div class="col-md-2 bg-dark min-vh-100">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+    
+    <!-- Main content -->
+    <div class="col-md-10">
+      <app-admin-header></app-admin-header>
+      
+      <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+        <div class="row mb-4">
+          <div class="col">
+            <h2>Order Management</h2>
+            <p class="text-muted">View and manage customer orders</p>
+          </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Filters</h5>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="statusFilter" class="form-label">Order Status</label>
+                <select id="statusFilter" class="form-select" [(ngModel)]="statusFilter">
+                  <option value="">All Statuses</option>
+                  <option *ngFor="let status of orderStatuses" [value]="status">
+                    {{ status }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="col-md-4">
+                <label for="paymentStatusFilter" class="form-label">Payment Status</label>
+                <select id="paymentStatusFilter" class="form-select" [(ngModel)]="paymentStatusFilter">
+                  <option value="">All Payment Statuses</option>
+                  <option *ngFor="let status of paymentStatuses" [value]="status">
+                    {{ status | titlecase }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary me-2" (click)="applyFilters()">
+                  <i class="bi bi-funnel me-1"></i> Apply Filters
+                </button>
+                <button class="btn btn-outline-secondary" (click)="resetFilters()">
+                  <i class="bi bi-x-circle me-1"></i> Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Loading spinner -->
+        <div *ngIf="loading" class="d-flex justify-content-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        
+        <!-- Orders table -->
+        <div class="card" *ngIf="!loading">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer ID</th>
+                    <th>Suborders</th>
+                    <th>Total Items</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of orders">
+                    <td>{{ order.orderId }}</td>
+                    <td>{{ order.createdAt | date:'medium' }}</td>
+                    <td>{{ order.customerId }}</td>
+                    <td>{{ getSubOrderCount(order) }}</td>
+                    <td>{{ getTotalItems(order) }}</td>
+                    <td>{{ order.finalAmount | currency:'USD' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'bg-warning': order.paymentStatus === 'pending',
+                        'bg-success': order.paymentStatus === 'paid',
+                        'bg-danger': order.paymentStatus === 'failed',
+                        'bg-info': order.paymentStatus === 'refunded'
+                      }">
+                        {{ order.paymentStatus | titlecase }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'bg-warning': order.orderStatus === 'Pending',
+                        'bg-primary': order.orderStatus === 'Processing',
+                        'bg-info': order.orderStatus === 'Shipped',
+                        'bg-success': order.orderStatus === 'Delivered',
+                        'bg-danger': order.orderStatus === 'Cancelled'
+                      }">
+                        {{ order.orderStatus }}
+                      </span>
+                    </td>
+                    <td>
+                      <a [routerLink]="['/admin/orders', order.orderId]" class="btn btn-sm btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- No orders message -->
+            <div *ngIf="orders.length === 0" class="text-center py-4">
+              <p class="text-muted">No orders found</p>
+            </div>
+            
+            <!-- Pagination -->
+            <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-4">
+              <nav aria-label="Orders pagination">
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="pageNumber === 1">
+                    <a class="page-link" href="javascript:void(0)" (click)="changePage(pageNumber - 1)">
+                      <i class="bi bi-chevron-left"></i>
+                    </a>
+                  </li>
+                  
+                  <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+                      [class.active]="pageNumber === i + 1">
+                    <a class="page-link" href="javascript:void(0)" (click)="changePage(i + 1)">
+                      {{ i + 1 }}
+                    </a>
+                  </li>
+                  
+                  <li class="page-item" [class.disabled]="pageNumber === totalPages">
+                    <a class="page-link" href="javascript:void(0)" (click)="changePage(pageNumber + 1)">
+                      <i class="bi bi-chevron-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,249 @@
+<!-- src/app/pages/admin/admin-reviews/admin-reviews.component.html -->
+<div class="admin-reviews-container">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>Reviews Management</h2>
+              <p class="text-muted">Manage and moderate product reviews</p>
+            </div>
+          </div>
+          
+          <!-- Filters and search -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Search reviews..." 
+                      [(ngModel)]="searchTerm" 
+                      (keyup.enter)="onSearch()"
+                    >
+                    <button 
+                      class="btn btn-primary" 
+                      type="button" 
+                      (click)="onSearch()"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="col-md-3">
+                  <select 
+                    class="form-select" 
+                    [(ngModel)]="statusFilter" 
+                    (change)="onFilterChange()"
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+                
+                <div class="col-md-3">
+                  <select 
+                    class="form-select" 
+                    [(ngModel)]="ratingFilter" 
+                    (change)="onFilterChange()"
+                  >
+                    <option value="">All Ratings</option>
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                  </select>
+                </div>
+                
+                <div class="col-md-2">
+                  <button 
+                    class="btn btn-outline-secondary w-100" 
+                    (click)="searchTerm = ''; statusFilter = ''; ratingFilter = ''; onFilterChange()"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Reviews list -->
+          <div *ngIf="!isLoading">
+            <!-- Pending reviews alert -->
+            <div 
+              class="alert alert-warning mb-4" 
+              *ngIf="hasPendingReviews()"
+            >
+              <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
+                <div>
+                  <h5 class="alert-heading mb-1">Pending Reviews</h5>
+                  <p class="mb-0">These reviews need to be approved or rejected before they appear on the site.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Review cards -->
+            <div class="row">
+              <div *ngFor="let review of reviews" class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="badge me-2" [ngClass]="getStatusBadgeClass(review.status)">
+                        {{review.status | titlecase}}
+                      </span>
+                      <span class="fs-6 fw-bold" [ngClass]="getRatingColorClass(review.rating)">
+                        {{getRatingStars(review.rating)}}
+                      </span>
+                    </div>
+                    <small class="text-muted">{{review.createdAt | date:'MMM d, y'}}</small>
+                  </div>
+                  <div class="card-body">
+                    <div class="row mb-3">
+                      <div class="col-md-7">
+                        <h5 class="card-title">
+                          <a routerLink="/admin/products/edit/{{review.productId}}" class="text-decoration-none">
+                            {{review.productName}}
+                          </a>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                          <a routerLink="/admin/customers/{{review.customerId}}" class="text-decoration-none">
+                            {{review.customerName}}
+                          </a>
+                        </h6>
+                      </div>
+                      <div class="col-md-5 text-end">
+                        <div class="dropdown">
+                          <button 
+                            class="btn btn-sm dropdown-toggle" 
+                            type="button" 
+                            [ngClass]="getStatusBadgeClass(review.status)"
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                          >
+                            {{review.status | titlecase}}
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateReviewStatus(review.id, 'approved')">Approve</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateReviewStatus(review.id, 'pending')">Mark as Pending</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="updateReviewStatus(review.id, 'rejected')">Reject</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="review-content">
+                      <p class="card-text">{{review.comment}}</p>
+                      
+                      <!-- Review images if any -->
+                      <div *ngIf="hasReviewImages(review)" class="review-images mb-3">
+                        <div class="row g-2">
+                          <div *ngFor="let image of review.images" class="col-4">
+                            <img [src]="image" class="img-thumbnail w-100" alt="Review image">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Seller response if any -->
+                      <div *ngIf="hasSellerResponse(review)" class="seller-response bg-light p-3 rounded mt-3">
+                        <div class="d-flex justify-content-between">
+                          <p class="mb-1 fw-semibold">Response from {{review?.response?.sellerName}}</p>
+                          <small class="text-muted">{{review?.response?.createdAt | date:'MMM d, y'}}</small>
+                        </div>
+                        <p class="mb-0">{{review?.response?.comment}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer bg-white">
+                    <div class="btn-group w-100">
+                      <button 
+                        class="btn btn-outline-success" 
+                        [disabled]="review.status === 'approved'"
+                        (click)="updateReviewStatus(review.id, 'approved')"
+                      >
+                        <i class="bi bi-check-circle me-1"></i>Approve
+                      </button>
+                      <button 
+                        class="btn btn-outline-danger" 
+                        [disabled]="review.status === 'rejected'"
+                        (click)="updateReviewStatus(review.id, 'rejected')"
+                      >
+                        <i class="bi bi-x-circle me-1"></i>Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+               
+              <!-- Empty state -->
+              <div class="col-12" *ngIf="reviews.length === 0">
+                <div class="card">
+                  <div class="card-body text-center py-5">
+                    <i class="bi bi-star text-muted fs-1 d-block mb-3"></i>
+                    <h5>No Reviews Found</h5>
+                    <p class="text-muted">There are no reviews that match your filters.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-4" *ngIf="totalItems > 0">
+              <div>
+                Showing {{(currentPage - 1) * pageSize + 1}} to {{Math.min(currentPage * pageSize, totalItems)}} of {{totalItems}} entries
+              </div>
+              <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage - 1)" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+                    <a class="page-link" href="javascript:void(0)" (click)="onPageChange(page)">{{page}}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage + 1)" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .review-content {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>

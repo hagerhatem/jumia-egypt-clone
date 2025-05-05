@@ -1,0 +1,157 @@
+/* src/app/auth/register-seller/register-seller.component.css */
+
+.register-seller-container {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .register-form-wrapper {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  h3 {
+    color: #666;
+    font-size: 18px;
+    margin: 25px 0 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #ff9900;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,153,0,0.1);
+  }
+  
+  .is-invalid {
+    border-color: #ff4444 !important;
+  }
+  
+  .invalid-feedback {
+    color: #ff4444;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .btn-primary {
+    background-color: #ff9900;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #ff8c00;
+  }
+  
+  .btn-primary:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .alert-danger {
+    background-color: #ff444420;
+    color: #ff4444;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+  
+  .links {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .links a {
+    color: #ff9900;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .links a:hover {
+    color: #ff8c00;
+  }
+  
+  .spinner-border {
+    vertical-align: middle;
+  }
+  
+  @media (max-width: 768px) {
+    .register-form-wrapper {
+      padding: 25px;
+      margin: 15px;
+    }
+    
+    h2 {
+      font-size: 22px;
+    }
+  }
+  /* register-seller.component.css */
+.input-error {
+  border: 1px solid #ff4444 !important;
+}
+
+.error-container {
+  margin-top: 4px;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.error-message::before {
+  content: "!";
+  color: #ff4444;
+  font-weight: bold;
+}

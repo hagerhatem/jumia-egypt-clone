@@ -1,0 +1,69 @@
+<div class="chatbot-container" [class.open]="isOpen">
+  <button class="chat-toggle" (click)="toggleChat()">
+    <i class="fas fa-comments"></i>
+  </button>
+
+  <div class="chat-window" *ngIf="isOpen">
+    <div class="chat-header">
+      <h3>Jumia Assistant</h3>
+      <button class="close-btn" (click)="toggleChat()">×</button>
+    </div>
+
+    <div class="chat-messages" #chatMessages>
+      <div *ngFor="let message of messages" 
+           [class.user-message]="message.isUser"
+           [class.bot-message]="!message.isUser"
+           class="message">
+        <div class="message-content">
+          <p>{{ message.text }}</p>
+          
+          <!-- Products list if available -->
+          <div class="products-list" *ngIf="message.products && message.products.length > 0">
+            <div class="product-card" *ngFor="let product of message.products" [routerLink]="['/Products', product.id]">
+              <div class="product-info">
+                <h4>{{ product.name }}</h4>
+                <p class="price">{{ product.price | currency:'EGP':'symbol':'1.2-2' }}</p>
+                <p class="description" [title]="product.description">
+                  {{ product.description.length > 100 ? (product.description | slice:0:100) + '...' : product.description }}
+                </p>
+                <div class="product-footer">
+                  <span class="stock" [class.in-stock]="product.stockQuantity > 0">
+                    {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" 
+             [(ngModel)]="currentMessage" 
+             (keyup.enter)="sendMessage()"
+             placeholder="Type your message..."
+             [disabled]="isLoading">
+      <label class="image-upload-btn" [class.disabled]="isLoading">
+        <input type="file" 
+               accept="image/*" 
+               (change)="handleImageUpload($event)"
+               [disabled]="isLoading"
+               style="display: none;">
+        <i class="fas fa-image"></i>
+      </label>
+      <button (click)="sendMessage()" [disabled]="isLoading">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

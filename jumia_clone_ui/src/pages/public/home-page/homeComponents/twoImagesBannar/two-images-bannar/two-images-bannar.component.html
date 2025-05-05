@@ -1,0 +1,17 @@
+<!-- two-images-banner.component.html -->
+<div class="banner-container">
+  <div class="banner-heading">
+    <h2>Shop & Save On Offers!</h2>
+  </div>
+  
+  <div class="banner-items-container">
+    <div *ngFor="let item of bannerItems" 
+         class="banner-item"
+         (click)="navigateToCategory(item.category)">
+      
+      <div class="banner-image">
+        <img [src]="item.imgSrc" [alt]="item.category.name + ' banner'">
+      </div>
+    </div>
+  </div>
+</div>

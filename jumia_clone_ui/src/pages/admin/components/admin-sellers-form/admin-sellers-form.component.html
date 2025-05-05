@@ -1,0 +1,262 @@
+<div class="admin-seller-form-container" style="overflow-y: hidden; height: 100vh;">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>{{isEditMode ? 'Edit' : 'Add'}} Seller</h2>
+              <p class="text-muted">{{isEditMode ? 'Update seller information' : 'Create a new seller account'}}</p>
+            </div>
+            <div class="col-auto">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary me-2" 
+                routerLink="/admin/sellers"
+              >
+                <i class="bi bi-arrow-left me-2"></i>Back to Sellers
+              </button>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="loading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Seller form -->
+          <div class="card" *ngIf="!loading">
+            <div class="card-body">
+              <form [formGroup]="sellerForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4 class="mb-3">Personal Information</h4>
+                    
+                    <div class="mb-3">
+                      <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="firstName" 
+                        formControlName="firstName"
+                        [ngClass]="{'is-invalid': sellerForm.get('firstName')?.invalid && sellerForm.get('firstName')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="sellerForm.get('firstName')?.invalid && sellerForm.get('firstName')?.touched">
+                        <span *ngIf="sellerForm.get('firstName')?.errors?.['required']">First name is required</span>
+                        <span *ngIf="sellerForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 100 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="lastName" 
+                        formControlName="lastName"
+                        [ngClass]="{'is-invalid': sellerForm.get('lastName')?.invalid && sellerForm.get('lastName')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="sellerForm.get('lastName')?.invalid && sellerForm.get('lastName')?.touched">
+                        <span *ngIf="sellerForm.get('lastName')?.errors?.['required']">Last name is required</span>
+                        <span *ngIf="sellerForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 100 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                      <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        formControlName="email"
+                        [ngClass]="{'is-invalid': sellerForm.get('email')?.invalid && sellerForm.get('email')?.touched}"
+                        [readonly]="isEditMode"
+                      >
+                      <div class="invalid-feedback" *ngIf="sellerForm.get('email')?.invalid && sellerForm.get('email')?.touched">
+                        <span *ngIf="sellerForm.get('email')?.errors?.['required']">Email is required</span>
+                        <span *ngIf="sellerForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="phoneNumber" class="form-label">Phone Number</label>
+                      <input 
+                        type="tel" 
+                        class="form-control" 
+                        id="phoneNumber" 
+                        formControlName="phoneNumber"
+                        [ngClass]="{'is-invalid': sellerForm.get('phoneNumber')?.invalid && sellerForm.get('phoneNumber')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="sellerForm.get('phoneNumber')?.invalid && sellerForm.get('phoneNumber')?.touched">
+                        <span *ngIf="sellerForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="profileImage" class="form-label">Profile Image</label>
+                      <input 
+                        type="file" 
+                        class="form-control" 
+                        id="profileImage" 
+                        accept="image/*" 
+                        (change)="onProfileImageChange($event)"
+                      >
+                      <small class="text-muted" *ngIf="isEditMode">Leave empty to keep the current image.</small>
+                      <div class="mt-2" *ngIf="profileImagePreview">
+                        <img [src]="profileImagePreview" alt="Profile Preview" class="img-thumbnail" style="max-height: 150px;">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <h4 class="mb-3">Business Information</h4>
+                    
+                    <div class="mb-3">
+                      <label for="businessName" class="form-label">Business Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="businessName" 
+                        formControlName="businessName"
+                        [ngClass]="{'is-invalid': sellerForm.get('businessName')?.invalid && sellerForm.get('businessName')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="sellerForm.get('businessName')?.invalid && sellerForm.get('businessName')?.touched">
+                        <span *ngIf="sellerForm.get('businessName')?.errors?.['required']">Business name is required</span>
+                        <span *ngIf="sellerForm.get('businessName')?.errors?.['maxlength']">Business name cannot exceed 255 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="businessDescription" class="form-label">Business Description</label>
+                      <textarea 
+                        class="form-control" 
+                        id="businessDescription" 
+                        formControlName="businessDescription" 
+                        rows="4"
+                      ></textarea>
+                      <small class="text-muted">Provide details about the seller's business.</small>
+                    </div>
+                    <div class="mb-3 form-check form-switch" *ngIf="isEditMode">
+                        <input 
+                          type="checkbox" 
+                          class="form-check-input" 
+                          id="changePassword" 
+                          [checked]="showPasswordFields"
+                          (change)="togglePasswordFields()"
+                        >
+                        <label class="form-check-label" for="changePassword">
+                          Change Password
+                        </label>
+                        <small class="d-block text-muted">Toggle to update the seller's password.</small>
+                      </div>
+                      
+                      <!-- Password fields (shown for new sellers or when toggle is on) -->
+                      <div *ngIf="!isEditMode || showPasswordFields">
+                        <div class="mb-3">
+                          <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                          <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            formControlName="password"
+                            [ngClass]="{'is-invalid': sellerForm.get('password')?.invalid && sellerForm.get('password')?.touched}"
+                          >
+                          <div class="invalid-feedback" *ngIf="sellerForm.get('password')?.invalid && sellerForm.get('password')?.touched">
+                            <span *ngIf="sellerForm.get('password')?.errors?.['required']">Password is required</span>
+                            <span *ngIf="sellerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+                          </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                          <input 
+                            type="password" 
+                            class="form-control" 
+                            id="confirmPassword" 
+                            formControlName="confirmPassword"
+                            [ngClass]="{'is-invalid': sellerForm.get('confirmPassword')?.invalid && sellerForm.get('confirmPassword')?.touched}"
+                          >
+                          <div class="invalid-feedback" *ngIf="sellerForm.get('confirmPassword')?.invalid && sellerForm.get('confirmPassword')?.touched">
+                            <span *ngIf="sellerForm.get('confirmPassword')?.errors?.['required']">Confirm password is required</span>
+                            <span *ngIf="sellerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</span>
+                          </div>
+                        </div>
+                      </div>
+                    <div class="mb-3">
+                      <label for="businessLogo" class="form-label">Business Logo</label>
+                      <input 
+                        type="file" 
+                        class="form-control" 
+                        id="businessLogo" 
+                        accept="image/*" 
+                        (change)="onBusinessLogoChange($event)"
+                      >
+                      <small class="text-muted" *ngIf="isEditMode">Leave empty to keep the current logo.</small>
+                      <div class="mt-2" *ngIf="businessLogoPreview">
+                        <img [src]="businessLogoPreview" alt="Business Logo Preview" class="img-thumbnail" style="max-height: 150px;">
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check form-switch" *ngIf="isEditMode">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input" 
+                        id="isVerified" 
+                        formControlName="isVerified"
+                      >
+                      <label class="form-check-label" for="isVerified">
+                        Verified Seller
+                      </label>
+                      <small class="d-block text-muted">Toggle to verify or unverify this seller.</small>
+                    </div>
+
+                    <div class="mb-3 form-check form-switch" *ngIf="isEditMode">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input" 
+                        id="isActive" 
+                        formControlName="isActive"
+                      >
+                      <label class="form-check-label" for="isActive">
+                        IsActive Seller
+                      </label>
+                      <small class="d-block text-muted">Toggle to activate or unActivate this seller.</small>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Submit buttons -->
+                <div class="mt-4 d-flex justify-content-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary me-2" 
+                    routerLink="/admin/sellers"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary" 
+                    [disabled]="sellerForm.invalid || submitting"
+                  >
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    <i class="bi" [ngClass]="isEditMode ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                    {{isEditMode ? 'Update' : 'Create'}} Seller
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

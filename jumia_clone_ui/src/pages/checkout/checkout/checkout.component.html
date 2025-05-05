@@ -1,0 +1,51 @@
+<!--Header component -->
+<!-- This component is responsible for displaying the header of the checkout page. -->
+<!-- It includes the logo, navigation links, and language selector. -->
+<div class="checkout-header">
+  <app-checkout-header></app-checkout-header>
+</div>
+
+<div class="checkout-container">
+  <div class="checkout-main">
+    <div class="checkout-steps">
+      <!-- Address Step -->
+      <app-address-step
+        [currentStep]="currentStep"
+        (saveAddressEvent)="onAddressConfirmed($event)">
+      </app-address-step>
+
+      <!-- Delivery Step -->
+      <app-delivery-step
+        [currentStep]="currentStep"
+        [isAddressConfirmed]="isAddressConfirmed"
+        (deliveryOptionSelected)="onDeliveryOptionSelected($event)"
+        (nextStep)="onDeliveryConfirmed()">
+      </app-delivery-step>
+
+      <!-- Payment Step -->
+      <app-payment-step
+        [currentStep]="currentStep"
+        [isDeliveryConfirmed]="isDeliveryConfirmed"
+        (nextStep)="onPaymentConfirmed($event)">
+      </app-payment-step>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary-container">
+      <app-order-summary
+        [deliveryFee]="deliveryFee"
+        [selectedDeliveryOption]="selectedDeliveryOption"
+        [addressId]="selectedAddressId"
+        [paymentMethod]="selectedPaymentMethod">
+      </app-order-summary>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="checkout-navigation" *ngIf="currentStep > 1">
+    <a class="back-button" (click)="goToPreviousStep()">
+      &lt;  Go back & continue shopping
+    </a>
+  </div>
+</div>
+

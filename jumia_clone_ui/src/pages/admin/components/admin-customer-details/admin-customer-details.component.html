@@ -1,0 +1,326 @@
+<!-- src/app/pages/admin/admin-customer-details/admin-customer-details.component.html -->
+<div class="admin-customer-details-container">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2>Customer Details</h2>
+              <p class="text-muted">Viewing customer information</p>
+            </div>
+            <button class="btn btn-outline-secondary" routerLink="/admin/customers">
+              <i class="bi bi-arrow-left me-2"></i>Back to Customers
+            </button>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Customer details -->
+          <div *ngIf="!isLoading && customer" class="row">
+            <!-- Customer profile -->
+            <div class="col-md-4">
+              <div class="card mb-4">
+                <div class="card-body text-center">
+                  <img 
+                    [src]="customer.avatar || 'assets/images/users/default-avatar.jpg'" 
+                    class="rounded-circle mb-3" 
+                    width="100" 
+                    height="100" 
+                    [alt]="getFullName(customer)"
+                  >
+                  <h5 class="mb-0">{{getFullName(customer)}}</h5>
+                  <p class="text-muted">{{customer.email}}</p>
+                  
+                  <div class="d-flex justify-content-center">
+                    <span class="badge" [ngClass]="getStatusBadgeClass(customer.status)">
+                      {{customer.status | titlecase}}
+                    </span>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="row text-center">
+                    <div class="col">
+                      <h5 class="mb-0">{{customerOrders.length}}</h5>
+                      <small class="text-muted">Orders</small>
+                    </div>
+                    <div class="col">
+                      <h5 class="mb-0">₦{{calculateTotalSpent().toLocaleString()}}</h5>
+                      <small class="text-muted">Total Spent</small>
+                    </div>
+                    <div class="col">
+                      <h5 class="mb-0">{{customer.createdAt | date:'MMM d, y'}}</h5>
+                      <small class="text-muted">Joined</small>
+                    </div>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="text-start">
+                    <p class="mb-1"><strong>Phone:</strong> {{customer.phoneNumber || 'N/A'}}</p>
+                    <p class="mb-0"><strong>Last Login:</strong> {{customer.lastLogin ? (customer.lastLogin | date:'MMM d, y, h:mm a') : 'Never'}}</p>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="d-grid gap-2">
+                    <div class="dropdown">
+                      <button 
+                        class="btn btn-outline-primary dropdown-toggle w-100" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-person-check me-2"></i>Manage Status
+                      </button>
+                      <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateCustomerStatus('active')">Active</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateCustomerStatus('inactive')">Inactive</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="updateCustomerStatus('banned')">Banned</a></li>
+                      </ul>
+                    </div>
+                    <button class="btn btn-outline-info">
+                      <i class="bi bi-envelope me-2"></i>Send Email
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Customer details tabs -->
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header bg-white">
+                  <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'overview'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('overview')"
+                      >
+                        <i class="bi bi-info-circle me-1"></i>Overview
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'orders'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('orders')"
+                      >
+                        <i class="bi bi-bag me-1"></i>Orders
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'addresses'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('addresses')"
+                      >
+                        <i class="bi bi-geo-alt me-1"></i>Addresses
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div class="card-body">
+                  <!-- Overview Tab -->
+                  <div *ngIf="activeTab === 'overview'">
+                    <h5 class="card-title">Customer Overview</h5>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="card mb-3">
+                          <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Personal Information</h6>
+                            <p class="mb-1"><strong>First Name:</strong> {{customer.firstName}}</p>
+                            <p class="mb-1"><strong>Last Name:</strong> {{customer.lastName}}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{customer.email}}</p>
+                            <p class="mb-0"><strong>Phone:</strong> {{customer.phoneNumber || 'N/A'}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-6">
+                        <div class="card mb-3">
+                          <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Account Information</h6>
+                            <p class="mb-1"><strong>Account ID:</strong> {{customer.id}}</p>
+                            <p class="mb-1"><strong>Status:</strong> {{customer.status | titlecase}}</p>
+                            <p class="mb-1"><strong>Registered On:</strong> {{customer.createdAt | date:'MMM d, y'}}</p>
+                            <p class="mb-0"><strong>Last Login:</strong> {{customer.lastLogin ? (customer.lastLogin | date:'MMM d, y, h:mm a') : 'Never'}}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-subtitle mb-3 text-muted">Default Shipping Address</h6>
+                        <p class="mb-0">{{getDefaultAddress()}}</p>
+                      </div>
+                    </div>
+                    
+                    <div class="card mt-3">
+                      <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Recent Activity</h6>
+                        
+                        <div *ngIf="customerOrders.length > 0" class="list-group list-group-flush">
+                          <div class="list-group-item px-0" *ngFor="let order of customerOrders.slice(0, 3)">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                <h6 class="mb-0">
+                                  <a [routerLink]="['/admin/orders', order.id]" class="text-decoration-none">
+                                    Order #{{order.id}}
+                                  </a>
+                                </h6>
+                                <small class="text-muted">{{order.date | date:'MMM d, y, h:mm a'}}</small>
+                              </div>
+                              <div>
+                                <span class="badge" [ngClass]="getOrderStatusBadgeClass(order.status)">
+                                  {{order.status | titlecase}}
+                                </span>
+                                <span class="ms-2">₦{{order.amount.toLocaleString()}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div *ngIf="customerOrders.length === 0" class="text-center py-3">
+                          <i class="bi bi-bag-x text-muted fs-4 d-block mb-2"></i>
+                          <p class="mb-0">No orders found for this customer</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Orders Tab -->
+                  <div *ngIf="activeTab === 'orders'">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="card-title mb-0">Order History</h5>
+                      <span class="badge bg-primary">{{customerOrders.length}} Orders</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let order of customerOrders">
+                            <td>
+                              <a [routerLink]="['/admin/orders', order.id]" class="fw-bold text-decoration-none">
+                                #{{order.id}}
+                              </a>
+                            </td>
+                            <td>{{order.date | date:'MMM d, y, h:mm a'}}</td>
+                            <td>₦{{order.amount.toLocaleString()}}</td>
+                            <td>
+                              <span class="badge" [ngClass]="getOrderStatusBadgeClass(order.status)">
+                                {{order.status | titlecase}}
+                              </span>
+                            </td>
+                            <td>
+                              <a [routerLink]="['/admin/orders', order.id]" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>View
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div *ngIf="customerOrders.length === 0" class="text-center py-4">
+                      <i class="bi bi-bag-x text-muted fs-1 d-block mb-3"></i>
+                      <h5>No Orders Found</h5>
+                      <p class="text-muted">This customer hasn't placed any orders yet</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Addresses Tab -->
+                  <div *ngIf="activeTab === 'addresses'">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="card-title mb-0">Saved Addresses</h5>
+                      <span class="badge bg-primary">{{customer.addresses?.length || 0}} Addresses</span>
+                    </div>
+                    
+                    <div class="row">
+                      <div *ngFor="let address of customer.addresses" class="col-md-6 mb-3">
+                        <div class="card h-100">
+                          <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                              <h6 class="card-subtitle text-muted">
+                                <span *ngIf="address.isDefault" class="badge bg-primary me-2">Default</span>
+                                Address
+                              </h6>
+                              <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)">Set as Default</a></li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li><a class="dropdown-item text-danger" href="javascript:void(0)">Delete</a></li>
+                                </ul>
+                              </div>
+                            </div>
+                            <p class="mb-1">{{address.street}}</p>
+                            <p class="mb-1">{{address.city}}, {{address.state}} {{address.zipCode}}</p>
+                            <p class="mb-0">{{address.country}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- No addresses message -->
+                      <div *ngIf="!customer.addresses || customer.addresses.length === 0" class="col-12">
+                        <div class="text-center py-4">
+                          <i class="bi bi-geo-alt-fill text-muted fs-1 d-block mb-3"></i>
+                          <h5>No Addresses Found</h5>
+                          <p class="text-muted">This customer hasn't added any addresses yet</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Customer not found -->
+          <div *ngIf="!isLoading && !customer" class="card">
+            <div class="card-body text-center py-5">
+              <i class="bi bi-exclamation-circle text-danger display-1"></i>
+              <h3 class="mt-4">Customer Not Found</h3>
+              <p class="text-muted">The customer you are looking for does not exist or has been removed.</p>
+              <button class="btn btn-primary" routerLink="/admin/customers">
+                <i class="bi bi-arrow-left me-2"></i>Back to Customers
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

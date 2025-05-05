@@ -1,0 +1,195 @@
+/* src/app/pages/admin/admin-dashboard/admin-dashboard.component.scss */
+:host {
+    --jumia-orange: #f68b1e;
+    --jumia-light-orange: #fff1e6;
+    --jumia-text: #333333;
+    --jumia-light-gray: #f8f9fa;
+    --jumia-border: #e9ecef;
+  }
+  
+  /* Main container */
+  .admin-dashboard-container {
+    background-color: var(--jumia-light-gray);
+    min-height: 100vh;
+    color: var(--jumia-text);
+    overflow: hidden;
+  }
+  
+  /* Sidebar styling */
+  :host ::ng-deep app-admin-sidebar {
+    background-color: white;
+    border-right: 1px solid var(--jumia-border);
+    height: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Header styling */
+  
+  
+  /* Dashboard title */
+  h2 {
+    color: var(--jumia-text);
+    font-weight: 600;
+  }
+  
+  .text-muted {
+    color: #6c757d;
+  }
+  
+  /* Cards styling */
+  .card {
+    border-radius: 8px;
+    border: 1px solid var(--jumia-border);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--jumia-border);
+    padding: 1rem 1.25rem;
+  }
+  
+  .card-header h5 {
+    color: var(--jumia-text);
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* Stats cards */
+  :host ::ng-deep app-admin-stats .stat-card {
+    background-color: white;
+    border-radius: 8px;
+    border-left: 4px solid var(--jumia-orange);
+    padding: 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    height: 100%;
+  }
+  
+  :host ::ng-deep app-admin-stats .stat-icon {
+    background-color: var(--jumia-light-orange);
+    color: var(--jumia-orange);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  :host ::ng-deep app-admin-stats .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--jumia-text);
+  }
+  
+  :host ::ng-deep app-admin-stats .stat-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
+  /* Tables styling */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table thead th {
+    background-color: var(--jumia-light-gray);
+    border-bottom: 1px solid var(--jumia-border);
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+  }
+  
+  .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--jumia-border);
+  }
+  
+  .table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .table tbody tr:hover {
+    background-color: var(--jumia-light-orange);
+  }
+  
+  /* Buttons */
+  .btn-outline-primary {
+    color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .btn-outline-primary:hover, 
+  .btn-outline-primary:focus {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    color: white;
+  }
+  
+  /* Status badges */
+  .badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    border-radius: 4px;
+  }
+  
+  /* Product images in tables */
+  .img-thumbnail {
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--jumia-border);
+  }
+  
+  /* Loading spinner */
+  .spinner-border.text-primary {
+    color: var(--jumia-orange) !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 767.98px) {
+    .col-md-2 {
+      height: auto !important;
+    }
+    
+    .col-md-10 {
+      height: auto;
+    }
+    
+    .container {
+      height: auto !important;
+      overflow-y: visible !important;
+      padding: 1rem;
+    }
+    
+    .table-responsive {
+      border: none;
+    }
+    
+    .card {
+      margin-bottom: 1.5rem;
+    }
+  }
+  
+  /* Medium devices and up */
+  @media (min-width: 768px) {
+    .container {
+      padding: 0 1.5rem;
+    }
+  }
+  
+  /* Large devices and up */
+  @media (min-width: 992px) {
+    .container {
+      padding: 0 2rem;
+    }
+  }

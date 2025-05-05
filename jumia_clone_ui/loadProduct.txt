@@ -1,0 +1,245 @@
+//this version of loadProduct is loading the subcategory right 
+loadProduct(productId: number): void {
+  this.isLoading = true;
+  this.productsService.getProductById(productId).subscribe({
+    next: (response) => {
+      const product = response.data;
+      
+      this.loadSubcategories(product.categoryId, () => {
+        // Now set the form values after subcategories are loaded
+        this.productForm.patchValue({
+          name: product.name,
+          description: product.description,
+          basePrice: product.basePrice,
+          discountPercentage: product.discountPercentage,
+          stockQuantity: product.stockQuantity,
+          categoryId: product.categoryId,
+          subcategoryId: product.subcategoryId,
+          sellerId: product.sellerId,
+          isAvailable: product.isAvailable,
+          approvalStatus: product.approvalStatus,
+          hasVariants: product.variants && product.variants.length > 0
+        });
+
+        // Enable subcategory control since we have a category
+        this.productForm.get('subcategoryId')?.enable();
+        
+        // Load subcategory attributes and handle product setup after attributes are loaded
+        this.loadSubcategoryAttributes(product.subcategoryId, () => {
+          // Set up product attributes if it doesn't have variants
+          if (!product.hasVariants && product.attributeValues) {
+            const attributeValues = this.productForm.get('attributeValues') as FormArray;
+            attributeValues.clear();
+            
+            product.attributeValues.forEach(attr => {
+              const attributeGroup = this.fb.group({
+                attributeId: [attr.attributeId],
+                attributeName: [attr.attributeName],
+                attributeType: [attr.attributeType],
+                value: [attr.value],
+                options: [attr.options || []]
+              });
+              attributeValues.push(attributeGroup);
+            });
+          }
+
+          // Handle variants if they exist
+          if (product.variants && product.variants.length > 0) {
+            const variantsArray = this.productForm.get('variants') as FormArray;
+            variantsArray.clear();
+
+            product.variants.forEach(variant => {
+              const variantGroup = this.createVariantFormGroup();
+              
+              variantGroup.patchValue({
+                variantName: variant.variantName,
+                price: variant.price,
+                discountPercentage: variant.discountPercentage,
+                stockQuantity: variant.stockQuantity,
+                sku: variant.sku,
+                isDefault: variant.isDefault,
+                isAvailable: variant.isAvailable
+              });
+
+              // Handle variant attributes
+              if (variant.attributes && variant.attributes.length > 0) {
+                const attributeValues = variantGroup.get('attributeValues') as FormArray;
+                attributeValues.clear();
+
+                variant.attributes.forEach(attr => {
+                  const subcategoryAttr = this.subcategoryAttributes.find(
+                    a => a.attributeId === attr.variantAttributeId || a.name === attr.attributeName
+                  ) || { type: 'text', options: [] };
+
+                  const attributeGroup = this.fb.group({
+                    attributeId: [attr.variantAttributeId],
+                    attributeName: [attr.attributeName],
+                    attributeType: [subcategoryAttr.type || 'text'],
+                    value: [attr.attributeValue],
+                    options: [subcategoryAttr.options || []]
+                  });
+                  attributeValues.push(attributeGroup);
+                });
+              }
+
+              variantsArray.push(variantGroup);
+            });
+
+            // Ensure default variant is set
+            this.updateVariantValidation(true);
+          }
+        });
+      });
+      
+      // Handle main image preview
+      if (product.mainImageUrl) {
+        this.imagePreview = environment.apiUrl + '/' + product.mainImageUrl;
+      }
+      
+      // Handle additional images
+      if (product.images && product.images.length > 0) {
+        this.additionalImageInputs = [];
+        this.additionalImagePreviews = [];
+        this.additionalImageFiles = [];
+        
+        product.images.forEach(image => {
+          this.additionalImageInputs.push({});
+          this.additionalImagePreviews.push(environment.apiUrl + '/' + image.imageUrl);
+          this.additionalImageFiles.push(null);
+        });
+      }
+      
+      this.isLoading = false;
+    },
+    error: (error) => {
+      this.notificationService.showError('Failed to load product');
+      console.error('Error loading product:', error);
+      this.isLoading = false;
+    }
+  });
+}  but the main image and addithional images are not displayed correctly
+
+
+ //this version load images correctly but not the subcategory 
+ loadProduct(productId: number): void {
+  this.isLoading = true;
+  this.productsService.getProductById(productId).subscribe({
+    next: (response) => {
+      const product = response.data;
+      
+      // Set basic product information
+      this.productForm.patchValue({
+        name: product.name,
+        description: product.description,
+        basePrice: product.basePrice,
+        discountPercentage: product.discountPercentage,
+        stockQuantity: product.stockQuantity,
+        categoryId: product.categoryId,
+        subcategoryId: product.subcategoryId,
+        sellerId: product.sellerId,
+        isAvailable: product.isAvailable,
+        approvalStatus: product.approvalStatus,
+        hasVariants: product.variants && product.variants.length > 0
+      });
+
+      // Enable subcategory control since we have a category
+      this.productForm.get('subcategoryId')?.enable();
+      
+      // Load subcategories based on the selected category
+      this.loadSubcategories(product.categoryId);
+      
+      // Load subcategory attributes and handle product setup after attributes are loaded
+      this.loadSubcategoryAttributes(product.subcategoryId, () => {
+        // Set up product attributes if it doesn't have variants
+        if (!product.hasVariants && product.attributeValues) {
+          const attributeValues = this.productForm.get('attributeValues') as FormArray;
+          attributeValues.clear();
+          
+          product.attributeValues.forEach(attr => {
+            const attributeGroup = this.fb.group({
+              attributeId: [attr.attributeId],
+              attributeName: [attr.attributeName],
+              attributeType: [attr.attributeType],
+              value: [attr.value],
+              options: [attr.options || []]
+            });
+            attributeValues.push(attributeGroup);
+          });
+        }
+
+        // Handle variants if they exist
+        if (product.variants && product.variants.length > 0) {
+          const variantsArray = this.productForm.get('variants') as FormArray;
+          variantsArray.clear();
+
+          product.variants.forEach(variant => {
+            const variantGroup = this.createVariantFormGroup();
+            
+            // Set basic variant information
+            variantGroup.patchValue({
+              variantName: variant.variantName,
+              price: variant.price,
+              discountPercentage: variant.discountPercentage,
+              stockQuantity: variant.stockQuantity,
+              sku: variant.sku,
+              isDefault: variant.isDefault,
+              isAvailable: variant.isAvailable
+            });
+
+            // Handle variant attributes
+            if (variant.attributes && variant.attributes.length > 0) {
+              const attributeValues = variantGroup.get('attributeValues') as FormArray;
+              attributeValues.clear();
+
+              variant.attributes.forEach(attr => {
+                const subcategoryAttr = this.subcategoryAttributes.find(
+                  a => a.attributeId === attr.variantAttributeId || a.name === attr.attributeName
+                ) || { type: 'text', options: [] };
+
+                const attributeGroup = this.fb.group({
+                  attributeId: [attr.variantAttributeId],
+                  attributeName: [attr.attributeName],
+                  attributeType: [subcategoryAttr.type || 'text'],
+                  value: [attr.attributeValue],
+                  options: [subcategoryAttr.options || []]
+                });
+                attributeValues.push(attributeGroup);
+              });
+            }
+
+            variantsArray.push(variantGroup);
+          });
+
+          // Ensure default variant is set
+          this.updateVariantValidation(true);
+        }
+      });
+      
+      // Handle main image preview
+      if (product.mainImageUrl) {
+        this.imagePreview = environment.apiUrl + '/' + product.mainImageUrl;
+      }
+      
+      // Handle additional images
+      if (product.images && product.images.length > 0) {
+        this.additionalImageInputs = [];
+        this.additionalImagePreviews = [];
+        this.additionalImageFiles = [];
+        
+        product.images.forEach(image => {
+          this.additionalImageInputs.push({});
+          this.additionalImagePreviews.push(environment.apiUrl + '/' + image.imageUrl);
+          this.additionalImageFiles.push(null);
+        });
+      }
+      
+      this.isLoading = false;
+    },
+    error: (error) => {
+      this.notificationService.showError('Failed to load product');
+      console.error('Error loading product:', error);
+      this.isLoading = false;
+    }
+  });
+}
+// and both of them are not displaying productVariants correctly at all 

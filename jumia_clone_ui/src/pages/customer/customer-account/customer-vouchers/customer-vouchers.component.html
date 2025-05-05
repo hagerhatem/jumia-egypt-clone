@@ -1,0 +1,56 @@
+<!-- vouchers.component.html -->
+<div class="vouchers-container">
+  <h1 class="vouchers-title">Vouchers</h1>
+
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        [class.active]="activeTab === 'ACTIVE'"
+        (click)="setActiveTab('ACTIVE')"
+      >
+        ACTIVE (0)
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        [class.active]="activeTab === 'INACTIVE'"
+        (click)="setActiveTab('INACTIVE')"
+      >
+        INACTIVE (0)
+      </a>
+    </li>
+  </ul>
+
+  <div [ngSwitch]="activeTab">
+    <div *ngSwitchCase="'ACTIVE'" class="empty-state">
+      <div class="voucher-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="#f68b1e"
+        >
+          <rect x="2" y="6" width="20" height="12" rx="2" stroke="none" />
+          <path
+            d="M22 10V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2m0 4v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2"
+            stroke="none"
+          />
+          <line x1="16" y1="8" x2="16" y2="16" stroke="#fff" stroke-width="1" />
+        </svg>
+      </div>
+      <h2 class="no-vouchers">You currently have no available Jumia Credit</h2>
+      <p class="voucher-description">
+        All your available Jumia credit and coupons will be displayed here
+      </p>
+      <button class="btn btn-primary continue-shopping" (click)="navigateToHome()">
+        Continue Shopping
+      </button>
+    </div>
+    <div *ngSwitchCase="'INACTIVE'" class="empty-state">
+      <!-- Content for inactive vouchers -->
+    </div>
+  </div>
+</div>

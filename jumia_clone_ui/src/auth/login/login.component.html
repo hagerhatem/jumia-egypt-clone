@@ -1,0 +1,135 @@
+<!-- src/app/auth/login/login.component.html
+
+<div class="login-container">
+    <div class="login-form-wrapper">
+      <h2>Login</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control" 
+            [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" 
+          />
+          <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+            <div *ngIf="f['email'].errors['required']">Email is required</div>
+            <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control" 
+            [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" 
+          />
+          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+            <div *ngIf="f['password'].errors['required']">Password is required</div>
+            <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Login
+          </button>
+        </div>
+        
+        <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+        
+        <div class="register-link">
+          Don't have an account? <a routerLink="/auth/register">Register here</a>
+        </div>
+      </form>
+    </div>
+  </div> --><div class="login-container">
+  <div class="jumia-brand">
+    <div class="jumia-logo-container">
+      <img src="/images/JMIA.png" alt="Jumia Logo" class="jumia-logo-image">
+    </div>
+  </div>
+
+  <div class="login-card">
+    <h2>Welcome to Jumia</h2>
+    <p class="instruction">Type your e-mail or phone number to log in or create a Jumia account.</p>
+
+    <app-notification
+      *ngIf="errorDetails"
+      [message]="errorDetails.message"
+      [type]="errorDetails.type === 'credentials' ? 'warning' : 
+              errorDetails.type === 'network' ? 'info' : 'error'"
+      (closed)="clearError()">
+    </app-notification>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Email field with specific error states -->
+      <div class="form-group">
+        <label for="email">Email or Mobile Number *</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          class="form-control" 
+          placeholder="Enter email or mobile number"
+          [ngClass]="{ 
+            'input-error': (submitted && f['email'].errors) || 
+                          f['email'].errors?.['emailNotFound']
+          }" 
+        />
+        <div *ngIf="submitted && f['email'].errors" class="error-container">
+          <div *ngIf="f['email'].errors['required']"  class="error-message">Email is required</div>
+          <div *ngIf="f['email'].errors['email']"  class="error-message">Email must be a valid email address</div>
+          <div *ngIf="f['email'].errors['emailNotFound']"  class="error-message">Email address not found</div>
+        </div>
+      </div>
+
+      <!-- Password field with specific error states -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-control" 
+          placeholder="Enter password"
+          [ngClass]="{ 
+            'input-error': (submitted && f['password'].errors) ||
+                          f['password'].errors?.['invalidPassword']
+          }" 
+        />
+        <div *ngIf="submitted && f['password'].errors" class="error-container">
+          <div *ngIf="f['password'].errors['required']"  class="error-message">Password is required</div>
+          <div *ngIf="f['password'].errors['minlength']"  class="error-message">Password must be at least 6 characters</div>
+          <div *ngIf="f['password'].errors['invalidPassword']"  class="error-message">Incorrect password</div>
+        </div>
+      </div>
+
+      <button class="btn-continue" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+        Continue
+      </button>
+
+      <p class="terms">
+        By continuing you agree to Jumia’s<br>
+        <a href="#" class="terms-link">Terms and Conditions</a>
+      </p>
+
+      <div class="social-login">
+        <button type="button" class="btn-facebook" (click)="handleFacebookLogin()">
+          <i class="fab fa-facebook-f"></i>
+          Log in with Facebook
+        </button>
+      </div>
+    </form>
+
+    <div class="support-links mt-4">
+      <p>Don't have an account? <a routerLink='/auth/register' class="support-link">Register here</a></p>
+    </div>
+  </div>
+</div>

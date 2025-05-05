@@ -1,0 +1,156 @@
+<!-- register.component.html -->
+<div class="register-container">
+  <!-- Jumia Logo -->
+  <div class="jumia-brand">
+    <div class="jumia-logo-container">
+      <img src="/images/JMIA.png" alt="Jumia logo" class="jumia-logo-image">
+    </div>
+  </div>
+
+  <!-- Registration Card -->
+  <div class="register-card">
+    <app-notification
+      *ngIf="errorDetails"
+      [message]="errorDetails.message"
+      [type]="errorDetails.type === 'credentials' ? 'warning' : 
+              errorDetails.type === 'network' ? 'info' : 'error'"
+      (closed)="clearError()">
+    </app-notification>
+
+    <h2>Create Your Jumia Account</h2>
+    
+    <!-- Social Login Section -->
+    <div class="social-login-buttons">
+      <button type="button" class="btn-facebook" (click)="handleFacebookLogin()">
+        <i class="fab fa-facebook-f"></i>
+        Continue with Facebook
+      </button>
+    </div>
+
+    <div class="separator text-center py-4">
+      <span>or</span>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Name Fields -->
+      <div class="name-fields">
+        <div class="form-group">
+          <label for="firstName">First Name *</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName" 
+            class="form-control"
+            placeholder="Enter first name"
+            [ngClass]="{ 'input-error': submitted && f['firstName'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && f['firstName'].errors?.['required']" class="error-message">
+              First Name is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName" 
+            class="form-control"
+            placeholder="Enter last name"
+            [ngClass]="{ 'input-error': submitted && f['lastName'].errors }" 
+          />
+          <div class="error-container">
+            <div *ngIf="submitted && f['lastName'].errors?.['required']" class="error-message">
+              Last Name is required
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          class="form-control"
+          placeholder="Enter email address"
+          [ngClass]="{ 'input-error': submitted && f['email'].errors }" 
+        />
+        <div class="error-container">
+          <div *ngIf="submitted && f['email'].errors?.['required']" class="error-message">
+            Email is required
+          </div>
+          <div *ngIf="submitted && f['email'].errors?.['email']" class="error-message">
+            Please enter a valid email
+          </div>
+          <div *ngIf="submitted && f['email'].errors?.['emailExists']" class="error-message">
+            Email already registered
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-control"
+          placeholder="Create password (min. 8 characters)"
+          [ngClass]="{ 'input-error': submitted && f['password'].errors }" 
+        />
+        <div class="error-container">
+          <div *ngIf="submitted && f['password'].errors?.['required']" class="error-message">
+            Password is required
+          </div>
+          <div *ngIf="submitted && f['password'].errors?.['minlength']" class="error-message">
+            Password must be at least 8 characters
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number *</label>
+        <input 
+          type="tel" 
+          id="phoneNumber" 
+          formControlName="phoneNumber" 
+          class="form-control"
+          placeholder="01X XXX XXXX"
+          [ngClass]="{ 'input-error': submitted && f['phoneNumber'].errors }" 
+        />
+        <div class="error-container">
+          <div *ngIf="submitted && f['phoneNumber'].errors?.['required']" class="error-message">
+            Phone Number is required
+          </div>
+          <div *ngIf="submitted && f['phoneNumber'].errors?.['pattern']" class="error-message">
+            Please enter a valid Egyptian number
+          </div>
+        </div>
+      </div>
+
+      <!-- Register Button -->
+      <button class="btn-continue" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+        Create Account
+      </button>
+
+      <!-- Terms -->
+      <p class="terms">
+        By creating an account, you agree to Jumia's<br>
+        <a href="#" class="terms-link">Terms and Conditions</a>
+      </p>
+
+      <!-- Existing Account Link -->
+      <div class="support-links">
+        <p>Already have an account? <a routerLink='/auth/login' class="support-link">Login here</a></p>
+      </div>
+    </form>
+  </div>
+</div>

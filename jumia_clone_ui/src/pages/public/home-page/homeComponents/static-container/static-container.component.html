@@ -1,0 +1,9 @@
+<div class="slider-container">
+  <div class="slider-wrapper">
+    <div class="slides-container" #slidesContainer>
+      <div class="slide" *ngFor="let slide of slides" (click)="navigateToCategory(slide.category)">
+        <img [src]="slide.image" [alt]="slide.alt">
+      </div>
+    </div>
+  </div>
+</div>

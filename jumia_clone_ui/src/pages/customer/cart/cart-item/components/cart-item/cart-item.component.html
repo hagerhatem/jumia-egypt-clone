@@ -1,0 +1,85 @@
+<div class="cart-item">
+  <div class="item-image">
+    <img [src]="item.productImage || item.imageUrl" [alt]="item.productName || item.name" />
+    <div *ngIf="item.isJumiaExpress" class="express-badge">
+      <span>Jumia Express</span>
+    </div>
+  </div>
+
+  <div class="item-details">
+    <div class="item-name">{{ item.productName || item.name }}</div>
+
+    <div class="item-attributes" *ngIf="getAttributesDisplay()">
+      {{ getAttributesDisplay() }}
+    </div>
+
+    <div class="item-pricing">
+      <div class="price-current">{{ item.discountedPrice | currency }}</div>
+      <div class="price-original" *ngIf="item.originalPrice">{{ item.originalPrice | currency }}</div>
+      <div class="price-discount" *ngIf="item.percentOff">-{{ item.percentOff }}%</div>
+    </div>
+
+    <div class="stock-status d-none" *ngIf="getStockMessage()">
+      {{ getStockMessage() }}
+    </div>
+
+    <div class="item-actions">
+      <div class="quantity-controls">
+        <button
+          type="button"
+          class="quantity-btn"
+          [disabled]="item.quantity <= 1 || isQuantityLoading"
+          (click)="decreaseQuantity()"
+        >
+          <i class="fas fa-minus"></i>
+        </button>
+        <span class="quantity-value">
+          <ng-container *ngIf="!isQuantityLoading; else loadingSpinner">
+            {{ item.quantity }}
+          </ng-container>
+          <ng-template #loadingSpinner>
+            <i class="fas fa-spinner fa-spin"></i>
+          </ng-template>
+        </span>
+        <button
+          type="button"
+          class="quantity-btn"
+          [disabled]="item.quantity >= (item.maxQuantity || 10) || isQuantityLoading"
+          (click)="increaseQuantity()"
+        >
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    
+      <button 
+        type="button" 
+        class="remove-btn" 
+        [disabled]="isRemoveLoading"
+        (click)="onRemove()"
+      >
+        <i class="fas" [class.fa-trash]="!isRemoveLoading" [class.fa-spinner]="isRemoveLoading" [class.fa-spin]="isRemoveLoading"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="confirmation-overlay" *ngIf="showRemoveConfirmation">
+  <div class="confirmation-dialog">
+    <div class="dialog-header">
+      <h4>Remove from cart</h4>
+      <button type="button" class="close-btn" (click)="cancelRemove()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="dialog-content">
+      <p>Do you really want to remove this item from cart?</p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="cancel-btn" (click)="cancelRemove()">Cancel</button>
+      <button type="button" class="confirm-btn" (click)="confirmRemove()">
+        <i class="fas fa-trash trash-icon"></i>
+        Remove Item
+      </button>
+    </div>
+  </div>
+</div>

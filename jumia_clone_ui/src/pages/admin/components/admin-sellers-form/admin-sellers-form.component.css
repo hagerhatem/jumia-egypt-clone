@@ -1,0 +1,260 @@
+/* Jumia-inspired Admin Seller Form Styles */
+:host {
+    --jumia-orange: #f68b1e;
+    --jumia-light-orange: #fff1e6;
+    --jumia-text: #333333;
+    --jumia-light-gray: #f8f9fa;
+    --jumia-border: #e9ecef;
+  }
+  
+  /* Global Styles */
+  body {
+    color: var(--jumia-text);
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+  }
+  
+  /* Admin Container */
+  .admin-seller-form-container {
+    overflow-y: hidden;
+    height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  /* Sidebar Styling */
+  .col-md-2.bg-dark {
+    background-color: var(--jumia-text) !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Main Content Area */
+  .col-md-10 {
+    padding: 0;
+  }
+  
+  /* Header Styling for Admin */
+  app-admin-header {
+    background-color: white;
+    border-bottom: 1px solid var(--jumia-border);
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Main Container */
+  .container.mt-4 {
+    padding: 0 25px;
+  }
+  
+  /* Page Title Styling */
+  h2 {
+    color: var(--jumia-text);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .text-muted {
+    color: #666 !important;
+  }
+  
+  /* Back Button */
+  .btn-outline-secondary {
+    color: var(--jumia-text);
+    border-color: var(--jumia-border);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: var(--jumia-light-gray);
+    border-color: #ddd;
+  }
+  
+  /* Card Styling */
+  .card {
+    border-radius: 8px;
+    border: 1px solid var(--jumia-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+  }
+  
+  .card-body {
+    padding: 30px;
+  }
+  
+  /* Form Section Headers */
+  h4 {
+    color: var(--jumia-orange);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--jumia-border);
+  }
+  
+  /* Form Controls */
+  .form-label {
+    font-weight: 500;
+    color: var(--jumia-text);
+    margin-bottom: 6px;
+  }
+  
+  .form-control {
+    border-radius: 4px;
+    border: 1px solid var(--jumia-border);
+    padding: 10px 12px;
+    height: auto;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 3px var(--jumia-light-orange);
+  }
+  
+  .form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: none;
+  }
+  
+  /* Form Error Messages */
+  .invalid-feedback {
+    color: #dc3545;
+    font-size: 80%;
+    margin-top: 4px;
+  }
+  
+  /* Required Field Indicator */
+  .text-danger {
+    color: #dc3545 !important;
+  }
+  
+  /* Checkbox and Switch Styling */
+  .form-check-input {
+    cursor: pointer;
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .form-switch .form-check-input:focus {
+    box-shadow: 0 0 0 3px var(--jumia-light-orange);
+  }
+  
+  /* Image Preview */
+  .img-thumbnail {
+    border-radius: 4px;
+    border: 1px solid var(--jumia-border);
+  }
+  
+  /* Submit Button Styling */
+  .btn-primary {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: #e97c11;
+    border-color: #e97c11;
+    box-shadow: 0 0 0 3px var(--jumia-light-orange);
+  }
+  
+  .btn-primary:disabled {
+    background-color: #f9a559;
+    border-color: #f9a559;
+  }
+  
+  /* Loading Spinner */
+  .spinner-border.text-primary {
+    color: var(--jumia-orange) !important;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 767.98px) {
+    .col-md-2.bg-dark {
+      min-height: auto !important;
+    }
+    
+    .card-body {
+      padding: 20px 15px;
+    }
+    
+    .container.mt-4 {
+      padding: 0 15px;
+      height: calc(100vh - 60px);
+    }
+    
+    h4 {
+      margin-top: 20px;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .d-flex.justify-content-end {
+      flex-direction: column;
+    }
+  }
+  
+  /* Medium screens */
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .col-md-2.bg-dark {
+      width: 25%;
+    }
+    
+    .col-md-10 {
+      width: 75%;
+    }
+  }
+  
+  /* Small Adjustments for Better Form Layout */
+  .mb-3 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Toggle Switch Colors */
+  .form-switch .form-check-input {
+    width: 40px;
+    height: 20px;
+  }
+  
+  /* File Input Custom Styling */
+  input[type="file"].form-control {
+    padding: 8px;
+    line-height: 1.2;
+  }
+  
+  /* Helper Text Styling */
+  small.text-muted {
+    display: block;
+    margin-top: 5px;
+    color: #777 !important;
+  }
+  
+  /* Icons Styling */
+  .bi {
+    margin-right: 5px;
+  }
+  
+  /* Password Fields Section */
+  div[formcontrolname="password"], 
+  div[formcontrolname="confirmPassword"] {
+    position: relative;
+  }
+  
+  /* Active/Verified Seller Toggle Styling */
+  .form-check.form-switch {
+    padding-left: 2.5em;
+  }
+  
+  /* Fix for form spacing on smaller screens */
+  @media (max-width: 991.98px) {
+    .col-md-6 {
+      margin-bottom: 15px;
+    }
+  }

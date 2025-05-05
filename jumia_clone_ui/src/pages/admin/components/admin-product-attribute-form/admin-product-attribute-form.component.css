@@ -1,0 +1,276 @@
+select:disabled {
+    background-color: #fff;
+    color: #000;
+    opacity: 1;
+  }
+  :host {
+    --jumia-orange: #f68b1e;
+    --jumia-light-orange: #fff1e6;
+    --jumia-text: #333333;
+    --jumia-light-gray: #f8f9fa;
+    --jumia-border: #e9ecef;
+  }
+  
+  /* Global styles */
+  .admin-product-attribute-form-container {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    color: var(--jumia-text);
+    background-color: #f5f5f5;
+  }
+  
+  /* Sidebar styling */
+  .bg-dark {
+    background-color: #282828 !important;
+  }
+  
+  /* Header styling */
+  app-admin-header {
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: block;
+  }
+  
+  /* Container adjustments */
+  .container {
+    padding: 20px;
+  }
+  
+  /* Card styles */
+  .card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+  
+  .card-body {
+    padding: 25px;
+  }
+  
+  /* Page title */
+  h2 {
+    color: var(--jumia-text);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .text-muted {
+    color: #666 !important;
+  }
+  
+  /* Form elements */
+  .form-label {
+    font-weight: 500;
+    color: var(--jumia-text);
+    margin-bottom: 8px;
+  }
+  
+  .form-control, .form-select {
+    padding: 10px 12px;
+    border: 1px solid var(--jumia-border);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 0.2rem rgba(246, 139, 30, 0.25);
+  }
+  
+  .form-control-plaintext {
+    background-color: var(--jumia-light-gray) !important;
+    border: 1px solid var(--jumia-border);
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 10px 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: #e47d17;
+    border-color: #e47d17;
+  }
+  
+  .btn-outline-secondary {
+    color: var(--jumia-text);
+    border-color: #ccc;
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: #f0f0f0;
+    color: var(--jumia-text);
+  }
+  
+  .btn-outline-primary {
+    color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: var(--jumia-light-orange);
+    color: var(--jumia-orange);
+  }
+  
+  .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Form switches */
+  .form-switch .form-check-input {
+    background-color: #ccc;
+    border-color: #ccc;
+    height: 1.25rem;
+    width: 2.25rem;
+  }
+  
+  .form-switch .form-check-input:checked {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .form-check-input:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 0.2rem rgba(246, 139, 30, 0.25);
+  }
+  
+  /* Input groups */
+  .input-group .btn {
+    padding: 10px 12px;
+  }
+  
+  /* Validation styles */
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  
+  .invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85rem;
+  }
+  
+  /* Spinner */
+  .spinner-border.text-primary {
+    color: var(--jumia-orange) !important;
+  }
+  
+  /* Icons */
+  .bi {
+    margin-right: 5px;
+  }
+  
+  /* Selected element highlighting */
+  select option:checked {
+    background-color: var(--jumia-light-orange);
+  }
+  
+  /* Back button */
+  .btn i.bi-arrow-left {
+    margin-right: 5px;
+  }
+  
+  /* Possible values section */
+  .input-group {
+    margin-bottom: 10px;
+  }
+  
+  /* Helper text */
+  .form-text {
+    color: #666;
+    font-size: 0.85rem;
+  }
+  
+  /* Required field indicator */
+  .text-danger {
+    color: #dc3545 !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 767.98px) {
+    .col-md-2 {
+      display: none; /* Hide sidebar on mobile */
+    }
+    
+    .col-md-10 {
+      width: 100%;
+    }
+    
+    .container {
+      padding: 15px;
+    }
+    
+    .row.mb-4 {
+      flex-direction: column;
+    }
+    
+    .col-auto {
+      margin-top: 10px;
+    }
+    
+    .card-body {
+      padding: 15px;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .mt-4.d-flex {
+      flex-direction: column;
+    }
+    
+    .btn-outline-secondary.me-2 {
+      margin-right: 0 !important;
+    }
+  }
+  
+  /* Medium screens */
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .container {
+      max-width: 100%;
+    }
+    
+    .col-md-2 {
+      flex: 0 0 auto;
+      width: 20%;
+    }
+    
+    .col-md-10 {
+      flex: 0 0 auto;
+      width: 80%;
+    }
+  }
+  
+  /* Custom height adjustment for the form container */
+  @media (max-height: 700px) {
+    .container {
+      height: calc(100vh - 80px);
+    }
+  }
+  
+  /* Add Jumia branding touch */
+  .admin-product-attribute-form-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--jumia-orange);
+    z-index: 1050;
+  }

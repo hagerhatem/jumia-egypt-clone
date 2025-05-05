@@ -1,0 +1,616 @@
+<!-- src/app/pages/admin/admin-settings/admin-settings.component.html -->
+<div class="admin-settings-container">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>System Settings</h2>
+              <p class="text-muted">Configure your store's global settings</p>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Settings tabs -->
+          <div class="card" *ngIf="!isLoading">
+            <div class="card-header bg-white">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <a class="nav-link" 
+                     [class.active]="activeTab === 'general'"
+                     href="javascript:void(0)" 
+                     (click)="changeTab('general')">
+                    <i class="bi bi-gear me-1"></i>General
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" 
+                     [class.active]="activeTab === 'email'"
+                     href="javascript:void(0)" 
+                     (click)="changeTab('email')">
+                    <i class="bi bi-envelope me-1"></i>Email
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" 
+                     [class.active]="activeTab === 'payment'"
+                     href="javascript:void(0)" 
+                     (click)="changeTab('payment')">
+                    <i class="bi bi-credit-card me-1"></i>Payment
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" 
+                     [class.active]="activeTab === 'notification'"
+                     href="javascript:void(0)" 
+                     (click)="changeTab('notification')">
+                    <i class="bi bi-bell me-1"></i>Notifications
+                  </a>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="card-body">
+              <!-- General Settings -->
+              <div *ngIf="activeTab === 'general'">
+                <form [formGroup]="generalForm" (ngSubmit)="saveGeneralSettings()">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h5 class="mb-3">Store Information</h5>
+                      
+                      <!-- Site Name -->
+                      <div class="mb-3">
+                        <label for="siteName" class="form-label">Site Name <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="siteName" 
+                          formControlName="siteName"
+                          [ngClass]="{'is-invalid': isFieldInvalid(generalForm, 'siteName')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(generalForm, 'siteName')">
+                          {{getErrorMessage(generalForm, 'siteName')}}
+                        </div>
+                      </div>
+                      
+                      <!-- Site Description -->
+                      <div class="mb-3">
+                        <label for="siteDescription" class="form-label">Site Description</label>
+                        <textarea 
+                          class="form-control" 
+                          id="siteDescription" 
+                          rows="3" 
+                          formControlName="siteDescription"
+                        ></textarea>
+                      </div>
+                      
+                      <!-- Currency -->
+                      <div class="mb-3">
+                        <label for="currency" class="form-label">Currency <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="currency" 
+                          formControlName="currency"
+                          [ngClass]="{'is-invalid': isFieldInvalid(generalForm, 'currency')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(generalForm, 'currency')">
+                          {{getErrorMessage(generalForm, 'currency')}}
+                        </div>
+                      </div>
+                      
+                      <!-- Logo URL -->
+                      <div class="mb-3">
+                        <label for="logo" class="form-label">Logo URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="logo" 
+                          formControlName="logo"
+                        >
+                        <small class="text-muted">In a real implementation, this would be an image upload.</small>
+                      </div>
+                      
+                      <!-- Favicon URL -->
+                      <div class="mb-3">
+                        <label for="favicon" class="form-label">Favicon URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="favicon" 
+                          formControlName="favicon"
+                        >
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <h5 class="mb-3">Contact Information</h5>
+                      
+                      <!-- Address -->
+                      <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea 
+                          class="form-control" 
+                          id="address" 
+                          rows="2" 
+                          formControlName="address"
+                        ></textarea>
+                      </div>
+                      
+                      <!-- Phone -->
+                      <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="phone" 
+                          formControlName="phone"
+                        >
+                      </div>
+                      
+                      <!-- Email -->
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input 
+                          type="email" 
+                          class="form-control" 
+                          id="email" 
+                          formControlName="email"
+                          [ngClass]="{'is-invalid': isFieldInvalid(generalForm, 'email')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(generalForm, 'email')">
+                          {{getErrorMessage(generalForm, 'email')}}
+                        </div>
+                      </div>
+                      
+                      <h5 class="mb-3 mt-4">Social Media</h5>
+                      
+                      <!-- Facebook URL -->
+                      <div class="mb-3">
+                        <label for="facebookUrl" class="form-label">Facebook URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="facebookUrl" 
+                          formControlName="facebookUrl"
+                        >
+                      </div>
+                      
+                      <!-- Twitter URL -->
+                      <div class="mb-3">
+                        <label for="twitterUrl" class="form-label">Twitter URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="twitterUrl" 
+                          formControlName="twitterUrl"
+                        >
+                      </div>
+                      
+                      <!-- Instagram URL -->
+                      <div class="mb-3">
+                        <label for="instagramUrl" class="form-label">Instagram URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="instagramUrl" 
+                          formControlName="instagramUrl"
+                        >
+                      </div>
+                      
+                      <!-- YouTube URL -->
+                      <div class="mb-3">
+                        <label for="youtubeUrl" class="form-label">YouTube URL</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="youtubeUrl" 
+                          formControlName="youtubeUrl"
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary" [disabled]="generalForm.invalid || isLoading">
+                      <i class="bi bi-save me-1"></i>Save General Settings
+                    </button>
+                  </div>
+                </form>
+              </div>
+              
+              <!-- Email Settings -->
+              <div *ngIf="activeTab === 'email'">
+                <form [formGroup]="emailForm" (ngSubmit)="saveEmailSettings()">
+                  <h5 class="mb-3">SMTP Configuration</h5>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <!-- SMTP Host -->
+                      <div class="mb-3">
+                        <label for="smtpHost" class="form-label">SMTP Host <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="smtpHost" 
+                          formControlName="smtpHost"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'smtpHost')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'smtpHost')">
+                          {{getErrorMessage(emailForm, 'smtpHost')}}
+                        </div>
+                      </div>
+                      
+                      <!-- SMTP Port -->
+                      <div class="mb-3">
+                        <label for="smtpPort" class="form-label">SMTP Port <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="smtpPort" 
+                          formControlName="smtpPort"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'smtpPort')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'smtpPort')">
+                          {{getErrorMessage(emailForm, 'smtpPort')}}
+                        </div>
+                      </div>
+                      
+                      <!-- SMTP Username -->
+                      <div class="mb-3">
+                        <label for="smtpUsername" class="form-label">SMTP Username <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="smtpUsername" 
+                          formControlName="smtpUsername"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'smtpUsername')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'smtpUsername')">
+                          {{getErrorMessage(emailForm, 'smtpUsername')}}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <!-- SMTP Password -->
+                      <div class="mb-3">
+                        <label for="smtpPassword" class="form-label">SMTP Password <span class="text-danger">*</span></label>
+                        <input 
+                          type="password" 
+                          class="form-control" 
+                          id="smtpPassword" 
+                          formControlName="smtpPassword"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'smtpPassword')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'smtpPassword')">
+                          {{getErrorMessage(emailForm, 'smtpPassword')}}
+                        </div>
+                      </div>
+                      
+                      <!-- Sender Email -->
+                      <div class="mb-3">
+                        <label for="senderEmail" class="form-label">Sender Email <span class="text-danger">*</span></label>
+                        <input 
+                          type="email" 
+                          class="form-control" 
+                          id="senderEmail" 
+                          formControlName="senderEmail"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'senderEmail')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'senderEmail')">
+                          {{getErrorMessage(emailForm, 'senderEmail')}}
+                        </div>
+                      </div>
+                      
+                      <!-- Sender Name -->
+                      <div class="mb-3">
+                        <label for="senderName" class="form-label">Sender Name <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="senderName" 
+                          formControlName="senderName"
+                          [ngClass]="{'is-invalid': isFieldInvalid(emailForm, 'senderName')}"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailForm, 'senderName')">
+                          {{getErrorMessage(emailForm, 'senderName')}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Enable SSL -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="enableSsl" 
+                        formControlName="enableSsl"
+                      >
+                      <label class="form-check-label" for="enableSsl">Enable SSL</label>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary" [disabled]="emailForm.invalid || isLoading">
+                      <i class="bi bi-save me-1"></i>Save Email Settings
+                    </button>
+                  </div>
+                </form>
+              </div>
+              
+              <!-- Payment Settings -->
+              <div *ngIf="activeTab === 'payment'">
+                <form [formGroup]="paymentForm" (ngSubmit)="savePaymentSettings()">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h5 class="mb-3">Paystack Integration</h5>
+                      
+                      <!-- Enable Paystack -->
+                      <div class="mb-3">
+                        <div class="form-check form-switch">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="enablePaystack" 
+                            formControlName="enablePaystack"
+                          >
+                          <label class="form-check-label" for="enablePaystack">Enable Paystack Payment</label>
+                        </div>
+                      </div>
+                      
+                      <!-- Paystack Public Key -->
+                      <div class="mb-3">
+                        <label for="paystackPublicKey" class="form-label">Public Key <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="paystackPublicKey" 
+                          formControlName="paystackPublicKey"
+                          [ngClass]="{'is-invalid': isFieldInvalid(paymentForm, 'paystackPublicKey')}"
+                          [attr.disabled]="!paymentForm.get('enablePaystack')?.value ? true : null"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(paymentForm, 'paystackPublicKey')">
+                          {{getErrorMessage(paymentForm, 'paystackPublicKey')}}
+                        </div>
+                      </div>
+                      
+                      <!-- Paystack Secret Key -->
+                      <div class="mb-3">
+                        <label for="paystackSecretKey" class="form-label">Secret Key <span class="text-danger">*</span></label>
+                        <input 
+                          type="password" 
+                          class="form-control" 
+                          id="paystackSecretKey" 
+                          formControlName="paystackSecretKey"
+                          [ngClass]="{'is-invalid': isFieldInvalid(paymentForm, 'paystackSecretKey')}"
+                          [attr.disabled]="!paymentForm.get('enablePaystack')?.value ? true : null"
+                        >
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(paymentForm, 'paystackSecretKey')">
+                          {{getErrorMessage(paymentForm, 'paystackSecretKey')}}
+                        </div>
+                      </div>
+                      
+                      <h5 class="mb-3 mt-4">Flutterwave Integration</h5>
+                      
+                      <!-- Enable Flutterwave -->
+                      <div class="mb-3">
+                        <div class="form-check form-switch">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="enableFlutterwave" 
+                            formControlName="enableFlutterwave"
+                          >
+                          <label class="form-check-label" for="enableFlutterwave">Enable Flutterwave Payment</label>
+                        </div>
+                      </div>
+                      
+                      <!-- Flutterwave Public Key -->
+                      <div class="mb-3">
+                        <label for="flutterwavePublicKey" class="form-label">Public Key</label>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          id="flutterwavePublicKey" 
+                          formControlName="flutterwavePublicKey"
+                          [attr.disabled]="!paymentForm.get('enableFlutterwave')?.value ? true : null"
+                        >
+                      </div>
+                      
+                      <!-- Flutterwave Secret Key -->
+                      <div class="mb-3">
+                        <label for="flutterwaveSecretKey" class="form-label">Secret Key</label>
+                        <input 
+                          type="password" 
+                          class="form-control" 
+                          id="flutterwaveSecretKey" 
+                          formControlName="flutterwaveSecretKey"
+                          [attr.disabled]="!paymentForm.get('enableFlutterwave')?.value ? true : null"
+                        >
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <h5 class="mb-3">Other Payment Methods</h5>
+                      
+                      <!-- Cash on Delivery -->
+                      <div class="mb-3">
+                        <div class="form-check form-switch">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="enableCashOnDelivery" 
+                            formControlName="enableCashOnDelivery"
+                          >
+                          <label class="form-check-label" for="enableCashOnDelivery">Enable Cash on Delivery</label>
+                        </div>
+                      </div>
+                      
+                      <!-- Bank Transfer -->
+                      <div class="mb-3">
+                        <div class="form-check form-switch">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="enableBankTransfer" 
+                            formControlName="enableBankTransfer"
+                          >
+                          <label class="form-check-label" for="enableBankTransfer">Enable Bank Transfer</label>
+                        </div>
+                      </div>
+                      
+                      <!-- Bank Details -->
+                      <div *ngIf="paymentForm.get('enableBankTransfer')?.value">
+                        <div class="mb-3">
+                          <label for="bankName" class="form-label">Bank Name</label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="bankName" 
+                            formControlName="bankName"
+                          >
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label for="accountNumber" class="form-label">Account Number</label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="accountNumber" 
+                            formControlName="accountNumber"
+                          >
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label for="accountName" class="form-label">Account Name</label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="accountName" 
+                            formControlName="accountName"
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid || isLoading">
+                      <i class="bi bi-save me-1"></i>Save Payment Settings
+                    </button>
+                  </div>
+                </form>
+              </div>
+              
+              <!-- Notification Settings -->
+              <div *ngIf="activeTab === 'notification'">
+                <form [formGroup]="notificationForm" (ngSubmit)="saveNotificationSettings()">
+                  <h5 class="mb-3">Email Notifications</h5>
+                  
+                  <!-- New Order Notification -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="newOrderNotification" 
+                        formControlName="newOrderNotification"
+                      >
+                      <label class="form-check-label" for="newOrderNotification">Notify when new order is placed</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Order Status Change Notification -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="orderStatusChangeNotification" 
+                        formControlName="orderStatusChangeNotification"
+                      >
+                      <label class="form-check-label" for="orderStatusChangeNotification">Notify when order status changes</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Low Stock Notification -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="lowStockNotification" 
+                        formControlName="lowStockNotification"
+                      >
+                      <label class="form-check-label" for="lowStockNotification">Notify when product stock is low</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Stock Threshold -->
+                  <div class="mb-3">
+                    <label for="stockThreshold" class="form-label">Low Stock Threshold</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="stockThreshold" 
+                      formControlName="stockThreshold"
+                    >
+                    <small class="text-muted">Notify when stock falls below this number</small>
+                  </div>
+                  
+                  <!-- New Customer Notification -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="newCustomerNotification" 
+                        formControlName="newCustomerNotification"
+                      >
+                      <label class="form-check-label" for="newCustomerNotification">Notify when new customer registers</label>
+                    </div>
+                  </div>
+                  
+                  <!-- New Review Notification -->
+                  <div class="mb-3">
+                    <div class="form-check form-switch">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="newReviewNotification" 
+                        formControlName="newReviewNotification"
+                      >
+                      <label class="form-check-label" for="newReviewNotification">Notify when new product review is submitted</label>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary" [disabled]="notificationForm.invalid || isLoading">
+                      <i class="bi bi-save me-1"></i>Save Notification Settings
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

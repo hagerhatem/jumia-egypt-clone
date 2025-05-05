@@ -1,0 +1,126 @@
+<!-- wishlist.component.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Custom Notification Component -->
+<div *ngIf="showNotification" 
+     class="fixed top-0 left-0 right-0 z-9999 flex items-center justify-between py-1 px-5"
+     [ngClass]="{
+       'bg-green-500': notificationType === 'success', 
+       'bg-yellow-500': notificationType === 'warning',
+       'bg-red-500': notificationType === 'error'
+     }">
+  <div class="flex items-center text-white">
+    <svg *ngIf="notificationType === 'success'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <svg *ngIf="notificationType === 'warning' || notificationType === 'error'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    </svg>
+    <span>{{ notificationMessage }}</span>
+  </div>
+  <i class="fa fa-times text-white cursor-pointer" (click)="hideNotification()"></i>
+</div>
+
+<div class="wishlist-container">
+  <div class="wishlist-header">
+    <h1 class="wishlist-title">Wishlist ({{wishlistItems.length}})</h1>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <i class="fas fa-spinner fa-spin"></i> Loading wishlist items...
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error && !loading && wishlistItems.length === 0" class="empty-wishlist">
+    <i class="far fa-heart"></i>
+    <p>{{ error }}</p>
+    <a [routerLink]="['/']" class="continue-shopping">Continue Shopping</a>
+  </div>
+
+  <!-- Wishlist content -->
+  <ng-container *ngIf="!loading && wishlistItems.length > 0">
+    <!-- Clear Wishlist button -->
+    <div class="clear-wishlist-container">
+      <button class="clear-wishlist-btn" (click)="showClearConfirmation()">
+        <i class="fas fa-trash"></i> Clear Wishlist
+      </button>
+    </div>
+
+    <!-- Wishlist items -->
+    <div class="wishlist-items">
+      <div *ngFor="let item of wishlistItems" class="wishlist-item" (click)="navigateToProduct(item.productId, $event)">
+        <div class="item-image">
+          <img [src]="getFullImageUrl(item.mainImageUrl)" [alt]="item.productName">
+        </div>
+        
+        <div class="item-details">
+          <h3 class="item-name">
+            <a [routerLink]="['/Products', item.productId]">{{ item.productName }}</a>
+          </h3>
+          <p class="item-description">{{ item.productDescription }}</p>
+          <div class="item-price">
+            <div class="price-container">
+              <span class="final-price">EGP {{ item.currentPrice | number }}</span>
+              <ng-container *ngIf="item.discountPercentage > 0">
+                <span class="base-price">EGP {{ item.basePrice | number }}</span>
+                <span class="discount">-{{ item.discountPercentage }}%</span>
+              </ng-container>
+            </div>
+          </div>
+          
+          <div class="item-status" [ngClass]="{'out-of-stock': !item.isAvailable}">
+            {{ item.isAvailable ? 'In Stock' : 'Out of Stock' }}
+          </div>
+        </div>
+        
+        <div class="item-actions">
+          <button 
+            class="add-to-cart-btn" 
+            [disabled]="movingToCart[item.productId] || !item.isAvailable"
+            (click)="moveToCart(item.productId); $event.stopPropagation()">
+            <span *ngIf="!movingToCart[item.productId]">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </span>
+            <span *ngIf="movingToCart[item.productId]">
+              <i class="fas fa-spinner fa-spin"></i> Adding...
+            </span>
+          </button>
+          
+          <button class="remove-btn" (click)="removeFromWishlist(item.productId); $event.stopPropagation()">
+            <i class="fas fa-trash"></i> Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Empty wishlist message -->
+  <div *ngIf="!loading && wishlistItems.length === 0 && !error" class="empty-wishlist">
+    <i class="far fa-heart"></i>
+    <p>Your wishlist is empty</p>
+    <a [routerLink]="['/']" class="continue-shopping">Continue Shopping</a>
+  </div>
+</div>
+
+<!-- Confirmation Dialog for clearing wishlist -->
+<div class="confirmation-overlay" *ngIf="showClearWishlistConfirmation">
+  <div class="confirmation-dialog">
+    <div class="dialog-header">
+      <h4>Clear Wishlist</h4>
+      <button type="button" class="close-btn" (click)="cancelClearWishlist()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="dialog-content">
+      <p>Do you really want to clear all items from your wishlist?</p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="cancel-btn" (click)="cancelClearWishlist()">Cancel</button>
+      <button type="button" class="confirm-btn" (click)="confirmClearWishlist()">
+        <i class="fas fa-trash trash-icon"></i>
+        Clear Wishlist
+      </button>
+    </div>
+  </div>
+</div>

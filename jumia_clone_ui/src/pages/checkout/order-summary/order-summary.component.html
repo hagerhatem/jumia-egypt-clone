@@ -1,0 +1,52 @@
+<div class="order-summary">
+  <h3>Order Summary</h3>
+  
+  <div class="summary-item">
+    <span>Items Total (3)</span>
+    <span>{{ itemsTotal | currency:'EGP':'symbol':'1.2-2' }}</span>
+  </div>
+  
+  <div class="summary-item">
+    <span>Delivery Fees</span>
+    <span>{{ deliveryFee | currency:'EGP':'symbol':'1.2-2' }}</span>
+  </div>
+  
+  
+  <div class="separator"></div>
+  
+  <div class="summary-item total">
+    <span>Total</span>
+    <span>{{ total | currency:'EGP':'symbol':'1.2-2' }}</span>
+  </div>
+  
+  <div class="coupon-section">
+    <input type="text" placeholder="Enter code here" class="coupon-input" />
+    <button class="apply-btn">APPLY</button>
+  </div>
+  
+  <button 
+    class="confirm-btn" 
+    [disabled]="isProcessing || !addressId || !selectedDeliveryOption || !paymentMethod"
+    (click)="confirmOrder()">
+    <span *ngIf="isProcessing">
+      <i class="fas fa-spinner fa-spin"></i> Processing...
+    </span>
+    <span *ngIf="!isProcessing">
+      Confirm Order
+    </span>
+  </button>
+  
+  <p class="terms-text">
+    By proceeding, you are automatically accepting the 
+    <a href="#">Terms & Conditions</a>
+  </p>
+</div>
+
+<!-- Payment Modal -->
+<app-payment-modal 
+  *ngIf="showPaymentModal && paymentResponse" 
+  [paymentResponse]="paymentResponse"
+  [paymentMethod]="paymentMethod"
+  (paymentComplete)="onPaymentComplete($event)"
+  (closeModal)="closePaymentModal()">
+</app-payment-modal>

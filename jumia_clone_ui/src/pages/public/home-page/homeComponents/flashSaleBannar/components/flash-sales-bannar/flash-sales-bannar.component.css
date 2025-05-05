@@ -1,0 +1,228 @@
+/* flash-sales-banner.component.scss */
+.flash-sales-container {
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  
+  .flash-sales-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e41e23;
+    color: white;
+    padding: 15px 20px;
+  }
+  
+  .flash-sales-title {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    
+    .flash-icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background-image: url('/images/home/flashSale/flashSale.png');
+      background-size: contain;
+      margin-right: 8px;
+    }
+  }
+  
+  .timer {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .see-all {
+    a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      
+      .arrow-right-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-image: url('/images/home/flashSale/flashSale.png');
+        background-size: contain;
+        margin-left: 5px;
+      }
+    }
+  }
+  
+  .products-carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .products-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    padding: 10px;
+    
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+  }
+  
+  .product-card {
+    flex: 0 0 auto;
+    width: 225px;
+    height: 320px;
+    margin: 0 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #fef3e9;
+    color: #f49932;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .product-image {
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+  
+  .product-info {
+    padding: 10px;
+  }
+  
+  .product-name {
+    font-size: 14px;
+    margin: 0 0 10px;
+    color: black;
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  .product-price {
+    margin-bottom: 10px;
+    
+    .final-price {
+      color: #000000;
+      font-weight: bold;
+      font-size: 16px;
+      margin-right: 5px;
+    }
+    
+    .base-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 14px;
+    }
+  }
+  
+  /* في ملف flash-sales-banner.component.scss */
+.stock-info {
+  .items-left {
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .progress-bar {
+    height: 5px;
+    background-color: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+    
+    .progress {
+      height: 100%;
+      background-color: #ff9900; /* اللون البرتقالي الافتراضي */
+      
+      &.low-stock-progress {
+        background-color: #e41e23; /* لون أحمر عندما تكون الكمية أقل من 10 */
+      }
+    }
+  }
+}
+  
+  .scroll-arrow {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: none;
+    color: white;
+    cursor: pointer;
+    z-index: 1;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .arrow-left-icon,
+    .arrow-right-icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    /* .arrow-left-icon {
+      background-image: url('/images/home/flashSale/flashSale.png');
+    }
+    
+    .arrow-right-icon {
+      background-image: url('/images/home/flashSale/flashSale.png');
+    } */
+  }
+  
+  .left-arrow {
+    left: 10px;
+  }
+  
+  .right-arrow {
+    right: 10px;
+  }

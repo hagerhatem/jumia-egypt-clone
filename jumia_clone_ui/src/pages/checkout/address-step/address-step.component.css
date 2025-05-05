@@ -1,0 +1,341 @@
+
+.step {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.step h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.step.active h2 {
+  color: #000;
+}
+
+.step.completed h2 {
+  color: #000;
+}
+
+.checkmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.checkmark.completed {
+  color: #34a853;
+}
+
+.step-title {
+  flex: 1;
+}
+
+.header-icon {
+  display: none; /* Jumia doesn't use an icon here */
+}
+
+.change-btn {
+  background: none;
+  border: none;
+  color: #0066c0;
+  font-size: 14px;
+  font-weight: normal;
+  cursor: pointer;
+  padding: 0;
+}
+
+.change-btn:hover {
+  text-decoration: underline;
+}
+
+.step-content {
+  margin-top: 10px;
+}
+
+.step-content.d-none {
+  display: none;
+}
+
+/* Address List */
+.address-list {
+  margin-bottom: 20px;
+}
+
+.address-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.address-card:hover {
+  border-color: #ccc;
+}
+
+.address-card.selected {
+  border-color: #0066c0;
+}
+
+.address-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #000;
+}
+
+
+.street,
+.location,
+.phone {
+  color: #333;
+}
+
+.address-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #0066c0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  text-decoration: underline;
+}
+
+.default-badge {
+  background-color: #f5f5f5;
+  color: #666;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Loading State */
+.text-center {
+  text-align: center;
+}
+
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+  border-width: 0.3em;
+  color: #F68B1E;
+}
+
+.text-muted {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Address Form */
+.address-form {
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #F68B1E;
+}
+
+.form-input::placeholder {
+  color: #aaa;
+}
+
+.form-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.top-50 {
+  top: 50%;
+}
+
+.end-0 {
+  right: 0;
+}
+
+.translate-middle-y {
+  transform: translateY(-50%);
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group.checkbox input {
+  margin: 0;
+}
+
+.form-group.checkbox label {
+  font-weight: normal;
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-btn {
+  background-color: #F68B1E;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.save-btn:hover {
+  background-color: #e07d1b;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Confirm Button */
+.d-flex {
+  display: flex;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.btn-primary {
+  background-color: #F68B1E;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e07d1b;
+}
+
+/* Completed State Summary */
+.step-summary {
+  margin-top: 10px;
+}
+
+.selected-address-summary p {
+  margin: 0;
+  font-size: 14px;
+  color: #000;
+}
+
+.selected-address-summary .mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.selected-address-summary .mb-0 {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .step {
+    padding: 15px;
+  }
+
+  .address-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .address-actions {
+    justify-content: flex-end;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+}

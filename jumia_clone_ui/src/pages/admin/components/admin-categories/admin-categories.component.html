@@ -1,0 +1,205 @@
+<!-- src/app/pages/admin/admin-categories/admin-categories.component.html -->
+<div class="admin-categories-container" style="overflow-y: hidden; height: 100vh;">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4 pb-5" style="overflow-y: auto; height: calc(100vh - 100px);">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>Categories Management</h2>
+              <p class="text-muted">Manage product categories</p>
+            </div>
+            <div class="col-auto">
+              <a routerLink="/admin/categories/add" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add New Category
+              </a>
+            </div>
+          </div>
+          
+          <!-- Filters and search -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Search categories..." 
+                      [(ngModel)]="searchTerm" 
+                      (keyup.enter)="onSearch()"
+                    >
+                    <button 
+                      class="btn btn-primary" 
+                      type="button" 
+                      (click)="onSearch()"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <select 
+                    class="form-select" 
+                    [(ngModel)]="statusFilter" 
+                    (change)="onFilterChange()"
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                
+                <div class="col-md-2">
+                  <button 
+                    class="btn btn-outline-secondary w-100" 
+                    (click)="searchTerm = ''; statusFilter = ''; onFilterChange()"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Categories table -->
+          <div class="card" *ngIf="!isLoading">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="bg-light">
+                    <tr>
+                      <th class="border-0">Category</th>
+                      <th class="border-0">Products</th>
+                      <th class="border-0">Status</th>
+                      <th class="border-0">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let category of categories">
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img 
+                            [src]="getFullImageUrl(category.imageUrl) || 'assets/images/categories/placeholder.jpg'" 
+                            class="img-thumbnail me-3" 
+                            width="50" 
+                            [alt]="category.name"
+                          >
+                          <div>
+                            <h6 class="mb-0">{{category.name}}</h6>
+                            <small class="text-muted">{{category.description || 'No description'}}</small>
+                          </div>
+                        </div>
+                      </td>
+                      
+                      <td>
+                        <span class="badge bg-info">{{category.productCount || 0}} products</span>
+                      </td>
+                      <td>
+                        @if(category.isActive) {
+                          <span class="badge bg-success">Active</span>
+                        } @else {
+                          <span class="badge bg-secondary">Inactive</span>
+                        }
+                      </td>
+                      <td>
+                        <div class="d-flex">
+                          <a [routerLink]="['/admin/categories/edit', category.categoryId]" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.categoryId)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <!-- Empty state -->
+                    <tr *ngIf="categories.length === 0">
+                      <td colspan="5" class="text-center py-4">
+                        <div class="py-5">
+                          <i class="bi bi-tags fs-1 text-muted d-block mb-3"></i>
+                          <h5>No categories found</h5>
+                          <p class="text-muted">Try changing your search or filter criteria</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                
+              </div>
+              
+            </div>
+          </div>
+
+          <!-- pagination section -->
+<div class="card-footer py-4 px-3 bg-white d-flex justify-content-between align-items-center" *ngIf="!isLoading && categories.length > 0">
+  <div>
+    <span class="text-muted">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} categories</span>
+  </div>
+  <nav aria-label="Categories pagination">
+    <ul class="pagination mb-0">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </button>
+      </li>
+      
+      <!-- First page -->
+      <li class="page-item" [class.active]="currentPage === 1">
+        <button class="page-link" (click)="goToPage(1)">1</button>
+      </li>
+      
+      <!-- Ellipsis if needed -->
+      <li class="page-item disabled" *ngIf="currentPage > 3">
+        <span class="page-link">...</span>
+      </li>
+      
+      <!-- Pages around current page -->
+      <ng-container *ngFor="let page of [currentPage - 1, currentPage, currentPage + 1]">
+        <li class="page-item" [class.active]="currentPage === page" *ngIf="page > 1 && page < totalPages">
+          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+      </ng-container>
+      
+      <!-- Ellipsis if needed -->
+      <li class="page-item disabled" *ngIf="currentPage < totalPages - 2">
+        <span class="page-link">...</span>
+      </li>
+      
+      <!-- Last page -->
+      <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+        <button class="page-link" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+      </li>
+      
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,58 @@
+<div class="payment-modal-overlay">
+    <div class="payment-modal">
+      <div class="payment-modal-header">
+        <h3>Complete Your Payment</h3>
+        <button class="close-btn" (click)="handleClose()">×</button>
+      </div>
+      
+      <div class="payment-modal-body">
+        <!-- Loading indicator -->
+        <div class="loading-spinner" *ngIf="isLoading">
+          <div class="spinner"></div>
+          <p>Processing your payment...</p>
+        </div>
+        
+        <!-- Credit Card Payment (iframe) -->
+        <div *ngIf="paymentMethod === 'card' && !isLoading" class="iframe-container">
+          <iframe 
+            [src]="iframeUrl" 
+            (load)="onIframeLoad()" 
+            frameborder="0" 
+            width="100%" 
+            height="500px">
+          </iframe>
+        </div>
+        
+        <!-- Vodafone Wallet Payment -->
+        <div *ngIf="paymentMethod === 'vodafone' && !isLoading" class="mobile-payment-form">
+          <p>Please enter your Vodafone Cash mobile number to complete the payment.</p>
+          
+          <div class="form-group">
+            <label for="phoneNumber">Mobile Number</label>
+            <input 
+              type="text" 
+              id="phoneNumber" 
+              [(ngModel)]="phoneNumber" 
+              placeholder="e.g. 01xxxxxxxxx"
+              class="form-control">
+          </div>
+          
+          <div class="error-message" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+          
+          <button class="btn btn-primary" (click)="submitMobilePayment()">
+            Pay Now
+          </button>
+        </div>
+        
+        <!-- PayPal Payment -->
+        <div *ngIf="paymentMethod === 'paypal' && !isLoading" class="paypal-container">
+          <p>You will be redirected to PayPal to complete your payment.</p>
+          <button class="btn btn-primary" (click)="redirectToPaypal()">
+            Continue to PayPal
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

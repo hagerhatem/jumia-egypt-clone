@@ -1,0 +1,132 @@
+<!-- Subscribe Section -->
+<section class="subscribe-section">
+    <div class="container">
+      <h3>NEW TO JUMIA?</h3>
+      <p>Subscribe to our newsletter to get updates on our latest offers!</p>
+      
+      <div class="email-container">
+        <div class="email-input">
+          <i class="fa-regular fa-envelope email-icon"></i>
+          <input type="email" placeholder="Enter E-mail Address" #emailInput>
+        </div>
+        <button class="subscribe-btn" (click)="subscribeToNewsletter(emailInput.value)">Subscribe</button>
+      </div>
+      
+      <div class="checkbox-container">
+        <input type="checkbox" id="privacy-check" (change)="acceptTerms($event)">
+        <label for="privacy-check">
+          I agree to Jumia's Privacy and Cookie Policy. You can unsubscribe from newsletters at any time.
+        </label>
+      </div>
+      
+      <a href="#" class="legal-link">I accept the Legal Terms</a>
+      
+      <div class="app-download">
+        <div class="app-info">
+          <h4>DOWNLOAD JUMIA FREE APP</h4>
+          <p>Get access to exclusive offers!</p>
+        </div>
+
+    
+
+        <div class="app-buttons">
+          <a href="#"><img src="/images/footer/applestore.png" alt="App Store" class="app-button"></a>
+          <a href="#"><img src="/images/footer/playstore.png" alt="Google Play" class="app-button"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <div class="container footer-columns">
+      <div class="footer-column">
+        <h3>NEED HELP?</h3>
+        <ul>
+          <li><a href="#">Chat with us</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+        
+        <h3 class="second-header">USEFUL LINKS:</h3>
+        <ul>
+          <li><a href="#">How to shop on Jumia?</a></li>
+          <li><a href="#">How to pay on Jumia?</a></li>
+          <li><a href="#">Delivery timelines</a></li>
+          <li><a href="#">Dispute Resolution Policy</a></li>
+          <li><a href="#">Return Policy</a></li>
+          <li><a href="#">Refund Policy</a></li>
+          <li><a href="#">Black Friday</a></li>
+          <li><a href="#">Ramadan 2025</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h3>ABOUT JUMIA EGYPT</h3>
+        <ul>
+          <li><a href="#">Jumia Careers</a></li>
+          <li><a href="#">Terms and Conditions</a></li>
+          <li><a href="#">Stores Credit Terms & Conditions</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookies Policy</a></li>
+          <li><a href="#">Free Shipping</a></li>
+          <li><a href="#">Flash Sales</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h3>MAKE MONEY WITH JUMIA</h3>
+        <ul>
+          <li><a href="#">Sell on Jumia</a></li>
+          <li><a href="#">Vendor Hub</a></li>
+          <li><a href="#">Become a Sales Consultant (J-Force)</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h3>JUMIA INTERNATIONAL</h3>
+        <div class="countries-grid">
+          <a href="#">Algeria</a>
+          <a href="#">Morocco</a>
+          <a href="#">Ivory Coast</a>
+          <a href="#">Nigeria</a>
+          <a href="#">Ghana</a>
+          <a href="#">Senegal</a>
+          <a href="#">Kenya</a>
+          <a href="#">Uganda</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Social and Payment -->
+  <section class="social-section">
+    <div class="container social-content">
+      <div class="social-links">
+        <h3>JOIN US ON</h3>
+        <a href="#" class="social-icon">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-youtube"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-tiktok"></i>
+        </a>
+      </div>
+      
+      <div class="payment-methods">
+        <h3>PAYMENT METHODS</h3>
+        <img src="/images/footer/cash.png" alt="Cash" class="payment-icon">
+        <img src="/images/footer/master.png" alt="Mastercard" class="payment-icon">
+        <img src="/images/footer/visa.png" alt="Visa" class="payment-icon">
+        <img src="/images/footer/fawry.png" alt="Fawry" class="payment-icon">
+      </div>
+    </div>
+  </section>

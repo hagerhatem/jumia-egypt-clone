@@ -1,0 +1,310 @@
+/* src/app/pages/admin/admin-settings/admin-settings.component.scss */
+
+:host {
+    --jumia-orange: #f68b1e;
+    --jumia-light-orange: #fff1e6;
+    --jumia-text: #333333;
+    --jumia-light-gray: #f8f9fa;
+    --jumia-border: #e9ecef;
+  }
+  
+  /* Main container styling */
+  .admin-settings-container {
+    background-color: #f5f5f5;
+    color: var(--jumia-text);
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar styling */
+  .bg-dark {
+    background-color: #282828 !important;
+  }
+  
+  /* Header styling */
+  app-admin-header {
+    border-bottom: 1px solid var(--jumia-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Page title and description */
+  h2 {
+    color: var(--jumia-text);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  h5 {
+    color: var(--jumia-text);
+    font-weight: 500;
+  }
+  
+  .text-muted {
+    color: #757575 !important;
+  }
+  
+  /* Card styling */
+  .card {
+    border-radius: 4px;
+    border: 1px solid var(--jumia-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+  
+  .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--jumia-border);
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* Tab styling */
+  .nav-tabs {
+    border-bottom: none;
+  }
+  
+  .nav-tabs .nav-link {
+    border: none;
+    color: var(--jumia-text);
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-tabs .nav-link:hover {
+    color: var(--jumia-orange);
+    background-color: rgba(246, 139, 30, 0.05);
+    border-bottom: 2px solid var(--jumia-light-orange);
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: var(--jumia-orange);
+    background-color: transparent;
+    border-bottom: 2px solid var(--jumia-orange);
+    font-weight: 600;
+  }
+  
+  /* Form control styling */
+  .form-label {
+    font-weight: 500;
+    color: var(--jumia-text);
+    margin-bottom: 0.4rem;
+  }
+  
+  .form-control,
+  .form-select {
+    border-radius: 4px;
+    border: 1px solid var(--jumia-border);
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 0.2rem rgba(246, 139, 30, 0.25);
+  }
+  
+  .form-control.is-invalid,
+  .form-select.is-invalid {
+    border-color: #dc3545;
+  }
+  
+  .form-control.is-invalid:focus,
+  .form-select.is-invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+  
+  .invalid-feedback {
+    font-size: 0.8rem;
+  }
+  
+  /* Button styling */
+  .btn-primary {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: #e07b18;
+    border-color: #e07b18;
+  }
+  
+  .btn-primary:disabled {
+    background-color: #ffa85c;
+    border-color: #ffa85c;
+  }
+  
+  /* Switch styling */
+  .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+    margin-top: 0.25em;
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--jumia-orange);
+    border-color: var(--jumia-orange);
+  }
+  
+  .form-check-input:focus {
+    border-color: var(--jumia-orange);
+    box-shadow: 0 0 0 0.2rem rgba(246, 139, 30, 0.25);
+  }
+  
+  .form-switch .form-check-input {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0, 0, 0, 0.25)'/%3e%3c/svg%3e");
+  }
+  
+  .form-switch .form-check-input:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+  }
+  
+  .form-check-label {
+    margin-left: 0.5rem;
+    font-weight: 400;
+  }
+  
+  /* Loading spinner */
+  .spinner-border.text-primary {
+    color: var(--jumia-orange) !important;
+  }
+  
+  /* Form sections styling */
+  .row.mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .col-md-6 {
+    padding: 0 1rem;
+  }
+  
+  /* Form field spacing */
+  .mb-3 {
+    margin-bottom: 1.25rem !important;
+  }
+  
+  /* Conditionally displayed form fields */
+  div[formGroupName] {
+    padding: 1rem;
+    background-color: var(--jumia-light-gray);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  
+  /* Custom badge colors for status displays */
+  .badge-success {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+  }
+  
+  .badge-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Icons styling */
+  .bi {
+    vertical-align: -0.125em;
+  }
+  
+  /* Required field indicator */
+  .text-danger {
+    color: #dc3545 !important;
+  }
+  
+  /* Input group styling */
+  .input-group-text {
+    background-color: var(--jumia-light-gray);
+    border: 1px solid var(--jumia-border);
+    border-right: none;
+  }
+  
+  .input-group .form-control {
+    border-left: none;
+  }
+  
+  /* Save buttons styling */
+  .d-flex.justify-content-end .btn {
+    min-width: 200px;
+  }
+  
+  /* Small text helper */
+  small.text-muted {
+    font-size: 0.75rem;
+  }
+  
+  /* Responsive styling */
+  @media (max-width: 768px) {
+    .col-md-2.bg-dark {
+      position: fixed;
+      z-index: 1030;
+      width: 250px;
+      height: 100%;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .col-md-2.bg-dark.show {
+      transform: translateX(0);
+    }
+    
+    .col-md-10 {
+      width: 100%;
+      padding-left: 0;
+    }
+    
+    .form-check-input {
+      width: 2em;
+      height: 1em;
+    }
+    
+    .d-flex.justify-content-end .btn {
+      min-width: 100%;
+    }
+  }
+  
+  /* Custom styling for the bank details section */
+  div[formGroupName="bankDetails"] {
+    background-color: var(--jumia-light-orange);
+    border-left: 3px solid var(--jumia-orange);
+  }
+  
+  /* Tab content animation */
+  [class^="tab-"] {
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Improve contrast for disabled inputs */
+  input[disabled], 
+  select[disabled], 
+  textarea[disabled] {
+    background-color: var(--jumia-light-gray);
+    opacity: 0.7;
+  }

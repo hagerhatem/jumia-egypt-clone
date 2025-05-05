@@ -1,0 +1,380 @@
+<!-- src/app/pages/admin/admin-seller-details/admin-seller-details.component.html -->
+<div class="admin-seller-details-container">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2>Seller Details</h2>
+              <p class="text-muted">Viewing seller information</p>
+            </div>
+            <button class="btn btn-outline-secondary" routerLink="/admin/sellers">
+              <i class="bi bi-arrow-left me-2"></i>Back to Sellers
+            </button>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Seller details -->
+          <div *ngIf="!isLoading && seller" class="row">
+            <!-- Seller profile -->
+            <div class="col-md-4">
+              <div class="card mb-4">
+                <div class="card-body text-center">
+                  <img 
+                    [src]="seller.storeImage || 'assets/images/stores/default-store.jpg'" 
+                    class="img-thumbnail mb-3" 
+                    style="width: 120px; height: 120px; object-fit: cover;" 
+                    [alt]="seller.storeName"
+                  >
+                  <h5 class="mb-0">{{seller.storeName}}</h5>
+                  <p class="text-muted">{{seller.email}}</p>
+                  
+                  <div class="d-flex justify-content-center gap-2">
+                    <span class="badge" [ngClass]="getStatusBadgeClass(seller.status)">
+                      {{seller.status | titlecase}}
+                    </span>
+                    <span class="badge" [ngClass]="getVerificationBadgeClass(seller.verificationStatus)">
+                      {{seller.verificationStatus | titlecase}}
+                    </span>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="row text-center">
+                    <div class="col">
+                      <h5 class="mb-0">{{sellerProducts.length}}</h5>
+                      <small class="text-muted">Products</small>
+                    </div>
+                    <div class="col">
+                      <h5 class="mb-0">{{seller.rating || 0}}<small>/5</small></h5>
+                      <small class="text-muted">Rating ({{seller.reviewCount || 0}})</small>
+                    </div>
+                    <div class="col">
+                      <h5 class="mb-0">{{seller.commission}}%</h5>
+                      <small class="text-muted">Commission</small>
+                    </div>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="text-start">
+                    <p class="mb-1"><strong>Owner:</strong> {{getFullName(seller)}}</p>
+                    <p class="mb-1"><strong>Phone:</strong> {{seller.phoneNumber || 'N/A'}}</p>
+                    <p class="mb-0"><strong>Registered:</strong> {{seller.createdAt | date:'MMM d, y'}}</p>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="d-grid gap-2">
+                    <div class="dropdown">
+                      <button 
+                        class="btn btn-outline-primary dropdown-toggle w-100" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-person-check me-2"></i>Manage Status
+                      </button>
+                      <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateSellerStatus('active')">Active</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" (click)="updateSellerStatus('inactive')">Inactive</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="updateSellerStatus('banned')">Banned</a></li>
+                      </ul>
+                    </div>
+                    <button class="btn btn-outline-info">
+                      <i class="bi bi-envelope me-2"></i>Contact Seller
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Verification actions -->
+              <div class="card mb-4" *ngIf="seller.verificationStatus === 'pending'">
+                <div class="card-header bg-warning bg-opacity-10">
+                  <h5 class="mb-0 text-warning">Verification Pending</h5>
+                </div>
+                <div class="card-body">
+                  <p>This seller is waiting for account verification. Please review their details and approve or reject.</p>
+                  
+                  <div class="mb-3" *ngIf="seller.businessRegistrationNumber">
+                    <label class="form-label">Business Registration Number</label>
+                    <input type="text" class="form-control" [value]="seller.businessRegistrationNumber" readonly>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="rejectionReason" class="form-label">Rejection Reason (if rejecting)</label>
+                    <textarea 
+                      class="form-control" 
+                      id="rejectionReason" 
+                      rows="3" 
+                      placeholder="Provide a reason for rejection..." 
+                      [(ngModel)]="rejectionReason"
+                    ></textarea>
+                  </div>
+                  
+                  <div class="d-flex gap-2">
+                    <button 
+                      class="btn btn-success flex-grow-1" 
+                      (click)="updateVerificationStatus('verified')"
+                    >
+                      <i class="bi bi-check-circle me-2"></i>Approve
+                    </button>
+                    <button 
+                      class="btn btn-danger flex-grow-1" 
+                      (click)="updateVerificationStatus('rejected')"
+                      [disabled]="!rejectionReason.trim()"
+                    >
+                      <i class="bi bi-x-circle me-2"></i>Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Rejection reason -->
+              <div class="card mb-4" *ngIf="seller.verificationStatus === 'rejected' && seller.rejectionReason">
+                <div class="card-header bg-danger bg-opacity-10">
+                  <h5 class="mb-0 text-danger">Verification Rejected</h5>
+                </div>
+                <div class="card-body">
+                  <label class="form-label">Rejection Reason</label>
+                  <p class="mb-0">{{seller.rejectionReason}}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Seller details tabs -->
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header bg-white">
+                  <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'overview'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('overview')"
+                      >
+                        <i class="bi bi-info-circle me-1"></i>Overview
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'products'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('products')"
+                      >
+                        <i class="bi bi-box-seam me-1"></i>Products
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a 
+                        class="nav-link" 
+                        [class.active]="activeTab === 'bank'" 
+                        href="javascript:void(0)" 
+                        (click)="changeTab('bank')"
+                      >
+                        <i class="bi bi-bank me-1"></i>Bank Details
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div class="card-body">
+                  <!-- Overview Tab -->
+                  <div *ngIf="activeTab === 'overview'">
+                    <h5 class="card-title">Store Information</h5>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="card mb-3">
+                          <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Store Details</h6>
+                            <p class="mb-1"><strong>Store Name:</strong> {{seller.storeName}}</p>
+                            <p class="mb-1"><strong>Owner:</strong> {{getFullName(seller)}}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{seller.email}}</p>
+                            <p class="mb-0"><strong>Phone:</strong> {{seller.phoneNumber || 'N/A'}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-6">
+                        <div class="card mb-3">
+                          <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Account Information</h6>
+                            <p class="mb-1"><strong>Account ID:</strong> {{seller.id}}</p>
+                            <p class="mb-1"><strong>Status:</strong> {{seller.status | titlecase}}</p>
+                            <p class="mb-1"><strong>Verification:</strong> {{seller.verificationStatus | titlecase}}</p>
+                            <p class="mb-0"><strong>Registered On:</strong> {{seller.createdAt | date:'MMM d, y'}}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Store Description</h6>
+                        <p class="mb-0">{{seller.storeDescription || 'No description provided.'}}</p>
+                      </div>
+                    </div>
+                    
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Business Address</h6>
+                        <p class="mb-0">
+                          {{seller.businessAddress.street}}, {{seller.businessAddress.city}}, 
+                          {{seller.businessAddress.state}}, {{seller.businessAddress.zipCode}}, 
+                          {{seller.businessAddress.country}}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Products Tab -->
+                  <div *ngIf="activeTab === 'products'">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="card-title mb-0">Products</h5>
+                      <span class="badge bg-primary">{{sellerProducts.length}} Products</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let product of sellerProducts">
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <img 
+                                  [src]="product.mainImageUrl" 
+                                  class="img-thumbnail me-3" 
+                                  width="50" 
+                                  [alt]="product.name"
+                                >
+                                <span>{{product.name}}</span>
+                              </div>
+                            </td>
+                            <td>₦{{product.finalPrice.toLocaleString()}}</td>
+                            <td>
+                              <span [ngClass]="{
+                                'text-success': product.stockQuantity > 50,
+                                'text-warning': product.stockQuantity > 10 && product.stockQuantity <= 50,
+                                'text-danger': product.stockQuantity <= 10
+                              }">
+                                {{product.stockQuantity}}
+                              </span>
+                            </td>
+                            <td>
+                              <span class="badge" [ngClass]="{
+                                'bg-success': product.approvalStatus === 'approved',
+                                'bg-secondary': product.approvalStatus === 'pending',
+                                'bg-warning': product.approvalStatus === 'pending_review'
+                              }">
+                                {{product.approvalStatus | titlecase}}
+                              </span>
+                            </td>
+                            <td>
+                              <a [routerLink]="['/admin/products/edit', product.productId]" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div *ngIf="sellerProducts.length === 0" class="text-center py-4">
+                      <i class="bi bi-box-seam text-muted fs-1 d-block mb-3"></i>
+                      <h5>No Products Found</h5>
+                      <p class="text-muted">This seller hasn't added any products yet</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Bank Details Tab -->
+                  <div *ngIf="activeTab === 'bank'">
+                    <h5 class="card-title mb-4">Bank Account Information</h5>
+                    
+                    <div *ngIf="seller.bankDetails">
+                      <div class="card mb-3">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <p class="mb-1"><strong>Account Name:</strong> {{seller.bankDetails.accountName}}</p>
+                              <p class="mb-1"><strong>Account Number:</strong> {{seller.bankDetails.accountNumber}}</p>
+                              <p class="mb-0"><strong>Bank Name:</strong> {{seller.bankDetails.bankName}}</p>
+                            </div>
+                            <div class="col-md-6">
+                              <p class="mb-0"><strong>Branch Code:</strong> {{seller.bankDetails.branchCode || 'N/A'}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="card-subtitle mb-2 text-muted">Commission Rate</h6>
+                          <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-3" style="height: 10px;">
+                              <div 
+                                class="progress-bar bg-success" 
+                                role="progressbar" 
+                                [style.width.%]="seller.commission / 0.3" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100"
+                              ></div>
+                            </div>
+                            <span class="fw-bold">{{seller.commission}}%</span>
+                          </div>
+                          <small class="text-muted">Commission rate applied to all products sold by this seller</small>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="!seller.bankDetails" class="text-center py-4">
+                      <i class="bi bi-bank text-muted fs-1 d-block mb-3"></i>
+                      <h5>No Bank Details</h5>
+                      <p class="text-muted">This seller hasn't provided bank account information yet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Seller not found -->
+          <div *ngIf="!isLoading && !seller" class="card">
+            <div class="card-body text-center py-5">
+              <i class="bi bi-exclamation-circle text-danger display-1"></i>
+              <h3 class="mt-4">Seller Not Found</h3>
+              <p class="text-muted">The seller you are looking for does not exist or has been removed.</p>
+              <button class="btn btn-primary" routerLink="/admin/sellers">
+                <i class="bi bi-arrow-left me-2"></i>Back to Sellers
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

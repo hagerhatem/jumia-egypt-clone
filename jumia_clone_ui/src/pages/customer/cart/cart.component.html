@@ -1,0 +1,74 @@
+<div class="cart-container">
+  <div class="cart-header">
+    <h1>Shopping Cart ({{ getCartItemCount() }})</h1>
+    <!-- Clear Cart Button -->
+    <button *ngIf="cartItems.length > 0" class="clear-cart-btn" (click)="onClearCart()">
+      Clear Cart
+    </button>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay text-align-center" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <div class="text-black">Loading...</div>
+  </div>
+
+  <!-- Error message -->
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+    <button class="retry-btn" (click)="refreshCart()">Try Again</button>
+  </div>
+
+  <div class="cart-content" *ngIf="cartItems.length > 0">
+    <div class="cart-items">
+      <app-cart-item
+      *ngFor="let item of cartItems"
+      [item]="item"
+      (quantityChange)="updateItemQuantity($event)"
+      (onRemoveItem)="removeItem($event)"
+    ></app-cart-item>
+    </div>
+
+    <app-cart-summary
+      [totalPrice]="getTotalPrice()"
+      [hasExpressItems]="hasJumiaExpressItems()"
+      [itemCount]="getCartItemCount()"
+      (refreshCart)="refreshCart()"
+      (proceedToCheckout)="checkout()"
+    ></app-cart-summary>
+  </div>
+
+  <div class="empty-cart" *ngIf="!isLoading && cartItems.length === 0">
+    <div class="empty-cart-message">
+      Your cart is empty
+    </div>
+    <a href="#">
+    <button class="continue-shopping-btn">
+      Continue Shopping
+    </button>
+  </a>
+  </div>
+
+  <!-- Clear Cart Confirmation Dialog -->
+  <div class="confirmation-overlay" *ngIf="showClearCartConfirmation">
+    <div class="confirmation-dialog">
+      <div class="dialog-header">
+        <h4>Clear Shopping Cart</h4>
+        <button type="button" class="close-btn" (click)="cancelClearCart()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <p>Do you really want to remove all items from your cart?</p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="cancel-btn" (click)="cancelClearCart()">Cancel</button>
+        <button type="button" class="confirm-btn" (click)="confirmClearCart()">
+          <i class="fas fa-trash trash-icon"></i>
+          Clear Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

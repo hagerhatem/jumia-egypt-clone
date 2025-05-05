@@ -1,0 +1,100 @@
+.profile-container {
+  padding: 24px;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.profile-title {
+  font-size: 24px;
+  font-weight: normal;
+  margin-bottom: 24px;
+}
+
+.nav-tabs .nav-link {
+  color: #75757a;
+  cursor: pointer;
+}
+
+.nav-tabs .nav-link.active {
+  color: #f68b1e;
+  border-bottom: 3px solid #f68b1e;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  text-align: center;
+}
+
+.profile-icon {
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-section {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.profile-description {
+  margin-bottom: 24px;
+  color: #75757a;
+}
+
+.save-button {
+  background-color: #f68b1e !important;
+  border-color: #f68b1e !important;
+  padding: 12px 32px !important;
+  font-weight: normal !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: #e67d10 !important;
+  border-color: #e67d10 !important;
+}
+
+.tabs {
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #75757a;
+  margin-right: 16px;
+}
+
+.tab.active {
+  color: #f68b1e;
+  border-bottom: 3px solid #f68b1e;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #75757a;
+}

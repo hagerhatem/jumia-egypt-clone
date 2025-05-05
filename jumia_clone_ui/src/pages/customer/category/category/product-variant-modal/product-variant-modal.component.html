@@ -1,0 +1,111 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<div *ngIf="showNotification" 
+     class="fixed top-0 left-0 right-0 z-9999 flex items-center justify-between py-1 px-5"
+     [ngClass]="{
+       'bg-green-500': notificationType === 'success', 
+       'bg-yellow-500': notificationType === 'warning',
+       'bg-red-500': notificationType === 'error'
+     }">
+  <div class="flex items-center text-white">
+    <svg *ngIf="notificationType === 'success'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <svg *ngIf="notificationType === 'warning' || notificationType === 'error'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    </svg>
+    <span>{{ notificationMessage }}</span>
+  </div>
+  <i class="fa fa-times text-white cursor-pointer" (click)="hideNotification()"></i>
+</div>
+
+<div class="modal-overlay" *ngIf="isOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Please select a variation</h2>
+        <button class="close-btn" (click)="close()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="product-info" *ngIf="product">
+          <div class="product-image">
+            <img [src]="getFullImageUrl(product.mainImageUrl)" [alt]="product.name">
+          </div>
+          <div class="product-details">
+            <h3>{{ product.name }}</h3>
+            <div class="product-price" *ngIf="selectedVariant">
+              <span class="final-price">EGP {{ selectedVariant.finalPrice }}</span>
+              <span class="base-price" *ngIf="selectedVariant.discountPercentage > 0">
+                EGP {{ selectedVariant.basePrice }}
+              </span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="variants-container">
+          <div *ngIf="loading" class="loading-variants">
+            <i class="fas fa-spinner fa-spin"></i> Loading variants...
+          </div>
+          
+          <div *ngIf="error" class="error-message">
+            {{ error }}
+          </div>
+          
+          <div *ngIf="!loading && !error">
+            <div *ngFor="let variant of variants" class="variant-option">
+              <div class="variant-details">
+                <div class="variant-name">{{ variant.name }}</div>
+                <div class="variant-price">
+                  <span class="final-price">EGP {{ variant.finalPrice }}</span>
+                  <span class="base-price" *ngIf="variant.discountPercentage > 0">
+                    EGP {{ variant.basePrice }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="quantity-controls">
+                <button 
+                  class="quantity-btn decrease" 
+                  [disabled]="variant.quantity <= 0 || variant.updating"
+                  (click)="decreaseQuantity(variant)">
+                  <i class="fas fa-minus"></i>
+                </button>
+                
+                <div class="quantity-display">
+                  <span *ngIf="!variant.updating">{{ variant.quantity }}</span>
+                  <i *ngIf="variant.updating" class="fas fa-spinner fa-spin"></i>
+                </div>
+                
+                <button 
+                  class="quantity-btn increase" 
+                  [disabled]="variant.quantity >= variant.stock || variant.updating"
+                  (click)="increaseQuantity(variant)">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div *ngIf="unavailableVariants.length > 0" class="unavailable-variants">
+              <p>Currently unavailable: {{ unavailableVariants.join(', ') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="close()">Continue Shopping</button>
+        <button 
+        class="btn-add-to-cart"
+        [disabled]="!hasSelectedVariants() || processingCart"
+        [routerLink]="['/cart']">
+        <span *ngIf="!processingCart">Go to Cart</span>
+        <span *ngIf="processingCart"><i class="fas fa-spinner fa-spin"></i> Adding...</span>
+      </button>
+      </div>
+    </div>
+  </div>
+
+
+ 

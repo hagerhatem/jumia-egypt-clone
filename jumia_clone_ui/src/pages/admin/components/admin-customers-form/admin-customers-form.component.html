@@ -1,0 +1,212 @@
+<div class="admin-customer-form-container" style="overflow-y: hidden; height: 100vh;">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 bg-dark min-vh-100">
+        <app-admin-sidebar></app-admin-sidebar>
+      </div>
+      
+      <!-- Main content -->
+      <div class="col-md-10">
+        <app-admin-header></app-admin-header>
+        
+        <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+          <div class="row mb-4">
+            <div class="col">
+              <h2>{{isEditMode ? 'Edit' : 'Add'}} Customer</h2>
+              <p class="text-muted">{{isEditMode ? 'Update customer information' : 'Create a new customer account'}}</p>
+            </div>
+            <div class="col-auto">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary me-2" 
+                routerLink="/admin/customers"
+              >
+                <i class="bi bi-arrow-left me-2"></i>Back to Customers
+              </button>
+            </div>
+          </div>
+          
+          <!-- Loading spinner -->
+          <div *ngIf="loading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Customer form -->
+          <div class="card" *ngIf="!loading">
+            <div class="card-body">
+              <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h4 class="mb-3">Personal Information</h4>
+                    
+                    <div class="mb-3">
+                      <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="firstName" 
+                        formControlName="firstName"
+                        [ngClass]="{'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
+                        <span *ngIf="customerForm.get('firstName')?.errors?.['required']">First name is required</span>
+                        <span *ngIf="customerForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 100 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="lastName" 
+                        formControlName="lastName"
+                        [ngClass]="{'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
+                        <span *ngIf="customerForm.get('lastName')?.errors?.['required']">Last name is required</span>
+                        <span *ngIf="customerForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 100 characters</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                      <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        formControlName="email"
+                        [ngClass]="{'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched}"
+                        [readonly]="isEditMode"
+                      >
+                      <div class="invalid-feedback" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                        <span *ngIf="customerForm.get('email')?.errors?.['required']">Email is required</span>
+                        <span *ngIf="customerForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="phoneNumber" class="form-label">Phone Number</label>
+                      <input 
+                        type="tel" 
+                        class="form-control" 
+                        id="phoneNumber" 
+                        formControlName="phoneNumber"
+                        [ngClass]="{'is-invalid': customerForm.get('phoneNumber')?.invalid && customerForm.get('phoneNumber')?.touched}"
+                      >
+                      <div class="invalid-feedback" *ngIf="customerForm.get('phoneNumber')?.invalid && customerForm.get('phoneNumber')?.touched">
+                        <span *ngIf="customerForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Password fields -->
+                    <div *ngIf="isEditMode" class="mb-3">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="changePassword" [checked]="showPasswordFields" (change)="togglePasswordFields()">
+                        <label class="form-check-label" for="changePassword">
+                          Change Password
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="showPasswordFields || !isEditMode">
+                      <div class="mb-3">
+                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input 
+                          type="password" 
+                          class="form-control" 
+                          id="password" 
+                          formControlName="password"
+                          [ngClass]="{'is-invalid': customerForm.get('password')?.invalid && customerForm.get('password')?.touched}"
+                        >
+                        <div class="invalid-feedback" *ngIf="customerForm.get('password')?.invalid && customerForm.get('password')?.touched">
+                          <span *ngIf="customerForm.get('password')?.errors?.['required']">Password is required</span>
+                          <span *ngIf="customerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+                        </div>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <input 
+                          type="password" 
+                          class="form-control" 
+                          id="confirmPassword" 
+                          formControlName="confirmPassword"
+                          [ngClass]="{'is-invalid': customerForm.get('confirmPassword')?.invalid && customerForm.get('confirmPassword')?.touched}"
+                        >
+                        <div class="invalid-feedback" *ngIf="customerForm.get('confirmPassword')?.invalid && customerForm.get('confirmPassword')?.touched">
+                          <span *ngIf="customerForm.get('confirmPassword')?.errors?.['required']">Confirm password is required</span>
+                          <span *ngIf="customerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <!-- Status -->
+                    <div class="mb-3">
+                      <label for="isActive" class="form-label">Status</label>
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive" formControlName="isActive">
+                        <label class="form-check-label" for="isActive">
+                          Account is active
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- Profile Image -->
+                    <div class="mb-3">
+                      <label for="profileImage" class="form-label">Profile Image</label>
+                      <input 
+                        type="file" 
+                        class="form-control" 
+                        id="profileImage" 
+                        accept="image/*" 
+                        (change)="onProfileImageChange($event)"
+                      >
+                      <small class="text-muted" *ngIf="isEditMode">Leave empty to keep the current image.</small>
+                    </div>
+                    
+                    <!-- Image Preview -->
+                    <div class="mb-3">
+                      <label class="form-label">Preview</label>
+                      <div class="border rounded p-3 d-flex justify-content-center">
+                        <img 
+                          [src]="profileImagePreview || 'assets/images/placeholder-user.jpg'" 
+                          class="img-fluid rounded-circle" 
+                          style="max-height: 150px; max-width: 150px;" 
+                          alt="Profile preview"
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Submit buttons -->
+                <div class="mt-4 d-flex justify-content-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary me-2" 
+                    routerLink="/admin/customers"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary" 
+                    [disabled]="customerForm.invalid || submitting"
+                  >
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <i *ngIf="!submitting" class="bi" [ngClass]="isEditMode ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                    {{isEditMode ? 'Update' : 'Create'}} Customer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

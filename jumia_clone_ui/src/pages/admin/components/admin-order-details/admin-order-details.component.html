@@ -1,0 +1,302 @@
+<div class="admin-order-detail-container" style="overflow-y: hidden; height: 100vh;">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <div class="col-md-2 bg-dark min-vh-100">
+      <app-admin-sidebar></app-admin-sidebar>
+    </div>
+    
+    <!-- Main content -->
+    <div class="col-md-10">
+      <app-admin-header></app-admin-header>
+      
+      <div class="container mt-4" style="overflow-y: auto; height: calc(100vh - 100px);">
+        <div class="row mb-4">
+          <div class="col">
+            <h2>Order Details</h2>
+            <p class="text-muted" *ngIf="order">Order #{{ order.orderId }} - {{ order.createdAt | date:'medium' }}</p>
+          </div>
+          <div class="col-auto">
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary me-2" 
+              routerLink="/admin/orders"
+            >
+              <i class="bi bi-arrow-left me-2"></i>Back to Orders
+            </button>
+            <button 
+              *ngIf="order" 
+              type="button" 
+              class="btn btn-outline-primary" 
+              (click)="exportOrderAsPdf()"
+            >
+              <i class="bi bi-file-earmark-pdf me-2"></i>Export as PDF
+            </button>
+          </div>
+        </div>
+        
+        <!-- Loading spinner -->
+        <div *ngIf="loading" class="d-flex justify-content-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        
+        <!-- Order details -->
+        <div *ngIf="!loading && order">
+          <!-- Order summary card -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <table class="table table-borderless">
+                    <tbody>
+                      <tr>
+                        <th scope="row" class="ps-0">Customer ID:</th>
+                        <td>{{ order.customerId }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Customer:</th>
+                        <td>{{ order.customerName }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Address ID:</th>
+                        <td>{{ order.addressId }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Address:</th>
+                        <td>{{ order.address }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Payment Method:</th>
+                        <td>{{ order.paymentMethod }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Created At:</th>
+                        <td>{{ order.createdAt | date:'medium' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Updated At:</th>
+                        <td>{{ order.updatedAt | date:'medium' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-6">
+                  <table class="table table-borderless">
+                    <tbody>
+                      <tr>
+                        <th scope="row" class="ps-0">Subtotal:</th>
+                        <td>{{ order.totalAmount | currency:'USD' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Discount:</th>
+                        <td>{{ order.discountAmount | currency:'USD' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Shipping:</th>
+                        <td>{{ order.shippingFee | currency:'USD' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Tax:</th>
+                        <td>{{ order.taxAmount | currency:'USD' }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="ps-0">Total:</th>
+                        <td class="fw-bold">{{ order.finalAmount | currency:'USD' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Order status card -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Order Status</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="orderStatus" class="form-label">Order Status</label>
+                  <div class="input-group">
+                    <select 
+                      id="orderStatus" 
+                      class="form-select" 
+                      [(ngModel)]="selectedOrderStatus"
+                      [disabled]="submitting"
+                    >
+                      <option *ngFor="let status of orderStatuses" [value]="status">
+                        {{ status }}
+                      </option>
+                    </select>
+                    <button 
+                      class="btn btn-primary" 
+                      type="button" 
+                      (click)="updateOrderStatus()"
+                      [disabled]="submitting || selectedOrderStatus === order.orderStatus"
+                    >
+                      <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                      Update
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label for="paymentStatus" class="form-label">Payment Status</label>
+                  <div class="input-group">
+                    <select 
+                      id="paymentStatus" 
+                      class="form-select" 
+                      [(ngModel)]="selectedPaymentStatus"
+                      [disabled]="submitting"
+                    >
+                      <option *ngFor="let status of paymentStatuses" [value]="status">
+                        {{ status | titlecase }}
+                      </option>
+                    </select>
+                    <button 
+                      class="btn btn-primary" 
+                      type="button" 
+                      (click)="updatePaymentStatus()"
+                      [disabled]="submitting || selectedPaymentStatus === order.paymentStatus"
+                    >
+                      <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-3">
+                <button 
+                  class="btn btn-danger" 
+                  type="button" 
+                  (click)="cancelOrder()"
+                  [disabled]="submitting || order.orderStatus === 'Cancelled'"
+                >
+                  <i class="bi bi-x-circle me-1"></i> Cancel Entire Order
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Suborders -->
+          <h4 class="mb-3">Suborders ({{ order.subOrders.length }})</h4>
+          
+          <div *ngFor="let subOrder of order.subOrders" class="card mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Suborder #{{ subOrder.suborderId }} - Seller: ({{ subOrder.sellerId }}) {{subOrder.sellerName}}</h5>
+              <button 
+                type="button" 
+                class="btn btn-outline-primary btn-sm" 
+                (click)="exportSubOrderAsPdf(subOrder)"
+              >
+                <i class="bi bi-file-earmark-pdf me-1"></i>Export
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center mb-2">
+                    <span class="me-2">Status:</span>
+                    <span class="badge" [ngClass]="{
+                      'bg-warning': subOrder.status === 'pending',
+                      'bg-primary': subOrder.status === 'processing',
+                      'bg-info': subOrder.status === 'shipped',
+                      'bg-success': subOrder.status === 'delivered',
+                      'bg-danger': subOrder.status === 'cancelled'
+                    }">
+                      {{ subOrder.status | titlecase }}
+                    </span>
+                  </div>
+                  
+                  <div class="mb-2" *ngIf="subOrder.trackingNumber">
+                    <span class="me-2">Tracking:</span>
+                    <span>{{ subOrder.trackingNumber }} ({{ subOrder.shippingProvider }})</span>
+                  </div>
+                  
+                  <div>
+                    <span class="me-2">Last Updated:</span>
+                    <span>{{ subOrder.statusUpdatedAt | date:'medium' }}</span>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="subOrderStatus{{ subOrder.suborderId }}" class="form-label">Update Status</label>
+                  <div class="input-group">
+                    <select 
+                      id="subOrderStatus{{ subOrder.suborderId }}" 
+                      class="form-select" 
+                      [(ngModel)]="selectedSubOrderStatuses[subOrder.suborderId]"
+                      [disabled]="submitting || subOrder.status === 'cancelled' || subOrder.status === 'delivered'"
+                    >
+                      <option *ngFor="let status of subOrderStatuses" [value]="status">
+                        {{ status | titlecase }}
+                      </option>
+                    </select>
+                    <button 
+                      class="btn btn-primary" 
+                      type="button" 
+                      (click)="updateSubOrderStatus(subOrder.suborderId)"
+                      [disabled]="submitting || selectedSubOrderStatuses[subOrder.suborderId] === subOrder.status || subOrder.status === 'cancelled' || subOrder.status === 'delivered'"
+                    >
+                      <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                      Update
+                    </button>
+                  </div>
+                  
+                  <button 
+                    class="btn btn-outline-danger btn-sm mt-2" 
+                    type="button" 
+                    (click)="cancelSubOrder(subOrder.suborderId)"
+                    [disabled]="submitting || subOrder.status === 'cancelled' || subOrder.status === 'delivered'"
+                  >
+                    <i class="bi bi-x-circle me-1"></i> Cancel Suborder
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Order items table -->
+              <h6 class="mb-3">Order Items</h6>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product ID</th>
+                      <th>Product Name</th>
+                      <th>Variant</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of subOrder.orderItems">
+                      <td>{{ item.productId }}</td>
+                      <td>{{ item.productName }}</td>
+                      <td>{{ item.variantId ? item.variantName : 'N/A' }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td>{{ item.priceAtPurchase | currency:'USD' }}</td>
+                      <td>{{ item.totalPrice | currency:'USD' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="5" class="text-end fw-bold">Subtotal:</td>
+                      <td>{{ subOrder.subtotal | currency:'USD' }}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
